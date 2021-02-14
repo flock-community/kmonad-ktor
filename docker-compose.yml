@@ -5,4 +5,15 @@ services:
     ports:
       - "27017:27017"
     restart: always
-    container_name: ktor-demo-mongodb
+    container_name: kmonad-mongodb
+  service:
+    build:
+      context: .
+      network: host
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+    container_name: kmonad-service
+    environment:
+      - "DB_HOST=mongodb"

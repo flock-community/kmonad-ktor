@@ -1,17 +1,9 @@
 package community.flock
 
-import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.request.*
-import io.ktor.client.*
-import io.ktor.client.engine.apache.*
-import io.ktor.routing.*
 import io.ktor.http.*
-import com.fasterxml.jackson.databind.*
-import io.ktor.jackson.*
-import io.ktor.features.*
-import kotlin.test.*
 import io.ktor.server.testing.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ApplicationTest {
     @Test

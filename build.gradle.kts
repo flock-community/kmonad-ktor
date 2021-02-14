@@ -8,8 +8,8 @@ val kmongo_version: String by project
 
 plugins {
     application
-    kotlin("jvm") version "1.4.21"
-    kotlin("kapt") version "1.4.21"
+    kotlin("jvm") version "1.4.30"
+    kotlin("kapt") version "1.4.30"
 }
 
 group = "community.flock"
