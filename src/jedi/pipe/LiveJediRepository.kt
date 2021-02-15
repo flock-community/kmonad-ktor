@@ -15,25 +15,30 @@ import org.litote.kmongo.eq
 import org.litote.kmongo.reactivestreams.KMongo
 import java.util.UUID
 
-object LiveJediRepository : JediRepository {
+class LiveJediRepository private constructor(private val host: String) : JediRepository {
 
-    var host: String? = null
-
-    private val col by lazy {
+    private val collection by lazy {
         KMongo.createClient(ConnectionString("mongodb://$host")).coroutine
             .getDatabase("test")
             .getCollection<Jedi>().also {
-                runBlocking { it.insertOne(community.flock.jedi.data.Jedi("Luke", 19)) }
+                runBlocking { it.insertMany(listOf(Jedi("Luke", 19), Jedi("Yoda", 942))) }
             }
     }
 
-    override suspend fun getJediByUUID(uuid: UUID): Either<AppException, Jedi> = col
+    override suspend fun getJediByUUID(uuid: UUID): Either<AppException, Jedi> = collection
         .findOne(Jedi::id eq uuid.toString())
         ?.internalize() ?: exception(NotFound(uuid))
 
 
-    override suspend fun getAllJedi(): Flow<Jedi> = col
-        .find()
-        .toFlow()
+    override suspend fun getAllJedi(): Either<AppException, Flow<Jedi>> =
+        runCatching { collection.find().toFlow() }.internalize()
+
+    companion object {
+        @Volatile
+        private var INSTANCE: LiveJediRepository? = null
+        fun instance(host: String): LiveJediRepository = INSTANCE ?: synchronized(this) {
+            INSTANCE ?: LiveJediRepository(host).also { INSTANCE = it }
+        }
+    }
 
 }

@@ -10,5 +10,5 @@ import java.util.UUID
 interface JediRepository : Repository {
     suspend fun getJediByUUID(uuid: UUID): Either<AppException, Jedi>
 
-    suspend fun getAllJedi(): Flow<Jedi>
+    suspend fun getAllJedi(): Either<AppException, Flow<Jedi>>
 }

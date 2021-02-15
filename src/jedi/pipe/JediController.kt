@@ -2,7 +2,6 @@ package community.flock.jedi.pipe
 
 import community.flock.AppException
 import community.flock.exceptionReader
-import kotlinx.coroutines.flow.toList
 import java.util.UUID
 
 object JediController {
@@ -12,6 +11,6 @@ object JediController {
             { exceptionReader(AppException.BadRequest) }
         )
 
-    suspend fun getAllJedi() = JediService.getAllJedi().toList()
+    suspend fun getAllJedi() = JediService.getAllJedi()
 
 }

@@ -3,6 +3,10 @@ package community.flock
 import arrow.core.Either
 import arrow.core.getOrHandle
 import com.fasterxml.jackson.databind.SerializationFeature
+import community.flock.AppException.BadRequest
+import community.flock.AppException.InternalServerError
+import community.flock.AppException.NotFound
+import community.flock.common.Env.mongoDbHost
 import community.flock.common.Reader
 import community.flock.common.Repository
 import community.flock.jedi.pipe.JediController
@@ -24,6 +28,7 @@ import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.pipeline.PipelineContext
+import kotlinx.coroutines.flow.toList
 
 typealias Ctx = PipelineContext<Unit, ApplicationCall>
 
@@ -34,6 +39,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @JvmOverloads
 fun Application.module(testing: Boolean = false) {
     val httpClient = HttpClient(Apache) {}
+    val jediRepository = LiveJediRepository.instance(mongoDbHost())
 
     install(ContentNegotiation) {
         jackson {
@@ -44,15 +50,15 @@ fun Application.module(testing: Boolean = false) {
     install(StatusPages) {
         exception<AppException> {
             val code = when (it) {
-                is AppException.BadRequest -> HttpStatusCode.BadRequest
-                is AppException.NotFound -> HttpStatusCode.NotFound
+                is BadRequest -> HttpStatusCode.BadRequest
+                is NotFound -> HttpStatusCode.NotFound
+                is InternalServerError -> HttpStatusCode.InternalServerError
             }
             call.respond(code, it.message ?: "")
         }
     }
 
-    val dbHost = environment.config.propertyOrNull("ktor.db.host")?.getString() ?: "localhost"
-    LiveJediRepository.host = dbHost
+
 
     routing {
         get("/") {
@@ -64,14 +70,16 @@ fun Application.module(testing: Boolean = false) {
         }
 
         get("/db") {
-            call.respond(JediController.getAllJedi())
+            runWith(jediRepository) { JediController.getAllJedi() }.toList()
+                .let { call.respond(it) }
         }
 
         get("/db/{uuid}") {
-            runWith(LiveJediRepository) { JediController.getJediByUUID(call.parameters["uuid"]) }
+            runWith(jediRepository) { JediController.getJediByUUID(call.parameters["uuid"]) }
+                .let { call.respond(it) }
         }
     }
 }
 
-suspend fun <D : Repository> Ctx.runWith(repo: D, block: suspend () -> Reader<D, Either<AppException, Any>>) =
-    call.respond(block().run(repo).getOrHandle { throw it })
+suspend fun <D : Repository, R : Any> Ctx.runWith(repo: D, block: suspend () -> Reader<D, Either<AppException, R>>): R =
+    block().run(repo).getOrHandle { throw it }
