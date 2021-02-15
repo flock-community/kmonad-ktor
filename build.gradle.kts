@@ -37,6 +37,7 @@ dependencies {
     implementation("io.ktor:ktor-jackson:$ktor_version")
     implementation("org.litote.kmongo:kmongo-coroutine:$kmongo_version")
     implementation("io.arrow-kt:arrow-fx:$arrow_version")
+    implementation("io.arrow-kt:arrow-optics:$arrow_version")
     implementation("io.arrow-kt:arrow-syntax:$arrow_version")
     kapt("io.arrow-kt:arrow-meta:$arrow_version")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")

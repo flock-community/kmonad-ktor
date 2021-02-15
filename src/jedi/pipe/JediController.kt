@@ -1,16 +1,17 @@
 package community.flock.jedi.pipe
 
-import arrow.core.getOrHandle
-import community.flock.AppException.BadRequest
-import community.flock.exception
-import community.flock.jedi.data.Jedi
+import community.flock.AppException
+import community.flock.exceptionReader
 import kotlinx.coroutines.flow.toList
-import java.util.*
+import java.util.UUID
 
 object JediController {
-    suspend fun getJediByUUID(uuidString: String?): Jedi = runCatching { UUID.fromString(uuidString) }
-        .fold({ JediService.getJediByUUID(it) }, { exception(BadRequest) })
-        .getOrHandle { throw it }
+    suspend fun getJediByUUID(uuidString: String?) = runCatching { UUID.fromString(uuidString) }
+        .fold(
+            { JediService.getJediByUUID(it) },
+            { exceptionReader(AppException.BadRequest) }
+        )
 
-    suspend fun getAllJedi(): List<Jedi> = JediService.getAllJedi().toList()
+    suspend fun getAllJedi() = JediService.getAllJedi().toList()
+
 }

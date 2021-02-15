@@ -9,7 +9,7 @@ import community.flock.jedi.data.Jedi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
-import java.util.*
+import java.util.UUID
 
 object TestJediRepository : JediRepository {
     override suspend fun getJediByUUID(uuid: UUID): Either<AppException, Jedi> =

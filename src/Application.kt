@@ -1,17 +1,31 @@
 package community.flock
 
+import arrow.core.Either
+import arrow.core.getOrHandle
 import com.fasterxml.jackson.databind.SerializationFeature
+import community.flock.common.Reader
+import community.flock.common.Repository
 import community.flock.jedi.pipe.JediController
 import community.flock.jedi.pipe.LiveJediRepository
-import io.ktor.application.*
-import io.ktor.client.*
-import io.ktor.client.engine.apache.*
-import io.ktor.features.*
-import io.ktor.http.*
-import io.ktor.jackson.*
-import io.ktor.response.*
-import io.ktor.routing.*
-import io.ktor.util.*
+import io.ktor.application.Application
+import io.ktor.application.ApplicationCall
+import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.apache.Apache
+import io.ktor.features.ContentNegotiation
+import io.ktor.features.StatusPages
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.jackson.jackson
+import io.ktor.response.respond
+import io.ktor.response.respondText
+import io.ktor.routing.get
+import io.ktor.routing.routing
+import io.ktor.util.KtorExperimentalAPI
+import io.ktor.util.pipeline.PipelineContext
+
+typealias Ctx = PipelineContext<Unit, ApplicationCall>
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -54,7 +68,10 @@ fun Application.module(testing: Boolean = false) {
         }
 
         get("/db/{uuid}") {
-            call.respond(JediController.getJediByUUID(call.parameters["uuid"]))
+            runWith(LiveJediRepository) { JediController.getJediByUUID(call.parameters["uuid"]) }
         }
     }
 }
+
+suspend fun <D : Repository> Ctx.runWith(repo: D, block: suspend () -> Reader<D, Either<AppException, Any>>) =
+    call.respond(block().run(repo).getOrHandle { throw it })
