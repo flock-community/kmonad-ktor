@@ -7,6 +7,7 @@ import community.flock.AppException
 import community.flock.AppException.NotFound
 import community.flock.exception
 import community.flock.jedi.data.Jedi
+import community.flock.jedi.pipe.JediRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf

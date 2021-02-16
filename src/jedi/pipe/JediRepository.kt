@@ -1,4 +1,4 @@
-package community.flock.jedi
+package community.flock.jedi.pipe
 
 import arrow.core.Either
 import community.flock.AppException

@@ -3,7 +3,6 @@ package community.flock.jedi.pipe
 import arrow.core.Either
 import community.flock.AppException
 import community.flock.common.Reader
-import community.flock.jedi.JediRepository
 import community.flock.jedi.data.Jedi
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
