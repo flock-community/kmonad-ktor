@@ -1,19 +1,19 @@
 package community.flock
 
 import arrow.core.Either
+import com.fasterxml.jackson.databind.SerializationFeature
 import community.flock.common.Reader
 import community.flock.common.Repository
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
-import io.ktor.http.ContentType
+import io.ktor.application.install
+import io.ktor.features.ContentNegotiation
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.NotFound
+import io.ktor.jackson.jackson
 import io.ktor.response.respond
-import io.ktor.response.respondText
-import io.ktor.routing.get
-import io.ktor.routing.routing
 import io.ktor.util.pipeline.PipelineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.toList
@@ -24,10 +24,10 @@ typealias Result<D, R> = Reader<D, Either<AppException, R>>
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @Suppress("unused") // Referenced in application.conf
-fun Application.module() {
-    routing {
-        get("/") {
-            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
+fun Application.main() {
+    install(ContentNegotiation) {
+        jackson {
+            enable(SerializationFeature.INDENT_OUTPUT)
         }
     }
 }

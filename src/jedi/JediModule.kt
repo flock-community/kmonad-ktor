@@ -1,6 +1,5 @@
 package community.flock.jedi
 
-import com.fasterxml.jackson.databind.SerializationFeature
 import com.mongodb.ConnectionString
 import community.flock.common.Env.getProp
 import community.flock.jedi.data.Jedi
@@ -11,9 +10,6 @@ import community.flock.respond
 import community.flock.respondFlow
 import io.ktor.application.Application
 import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.features.ContentNegotiation
-import io.ktor.jackson.jackson
 import io.ktor.routing.get
 import io.ktor.routing.routing
 import kotlinx.coroutines.runBlocking
@@ -31,17 +27,13 @@ fun Application.module() {
 }
 
 fun Application.moduleWithDependencies(repository: JediRepository) {
-    install(ContentNegotiation) {
-        jackson {
-            enable(SerializationFeature.INDENT_OUTPUT)
-        }
-    }
+
     routing {
-        get("/db") {
+        get("/jedi") {
             respondFlow(repository) { JediController.getAllJedi() }
         }
 
-        get("/db/{uuid}") {
+        get("/jedi/{uuid}") {
             respond(repository) { JediController.getJediByUUID(call.parameters["uuid"]) }
         }
     }
