@@ -6,6 +6,7 @@ import community.flock.AppException.NotFound
 import community.flock.exception
 import community.flock.jedi.data.Jedi
 import community.flock.jedi.data.internalize
+import community.flock.jedi.define.JediRepository
 import kotlinx.coroutines.flow.Flow
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.eq

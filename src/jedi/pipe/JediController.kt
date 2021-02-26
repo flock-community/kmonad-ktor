@@ -5,6 +5,7 @@ import community.flock.AppException
 import community.flock.common.Reader
 import community.flock.exceptionReader
 import community.flock.jedi.data.Jedi
+import community.flock.jedi.define.JediRepository
 import java.util.UUID
 
 object JediController {

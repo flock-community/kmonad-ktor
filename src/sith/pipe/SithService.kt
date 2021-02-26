@@ -1,12 +1,13 @@
 package community.flock.sith.pipe
 
-import community.flock.common.Logger
-
-class Context(val repo: SithRepository, val logger: Logger)
+import community.flock.sith.define.SithContext
+import java.util.UUID
 
 object SithService {
 
-    suspend fun Context.getSithS() = repo.getSithR()
+    suspend fun SithContext.getSithByUUID(uuid: UUID) = sithRepository.getSithByUUID(uuid)
+
+    suspend fun SithContext.getAllSith() = sithRepository.getAllSith()
         .also { logger.log(it.toString()) };
 
 }

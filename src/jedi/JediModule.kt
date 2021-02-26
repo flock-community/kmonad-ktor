@@ -4,7 +4,7 @@ import com.mongodb.ConnectionString
 import community.flock.common.Env.getProp
 import community.flock.jedi.data.Jedi
 import community.flock.jedi.pipe.JediController
-import community.flock.jedi.pipe.JediRepository
+import community.flock.jedi.define.JediRepository
 import community.flock.jedi.pipe.LiveJediRepository
 import community.flock.respond
 import community.flock.respondFlow
@@ -18,12 +18,15 @@ import org.litote.kmongo.reactivestreams.KMongo
 
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
+
     val host = getProp("ktor.db.host", "localhost")
     val mongoDbClient = KMongo.createClient(ConnectionString("mongodb://$host")).coroutine
     val jediCollection = mongoDbClient.getDatabase("test").getCollection<Jedi>().also {
         runBlocking { it.insertMany(listOf(Jedi("Luke", 19), Jedi("Yoda", 942))) }
     }
+
     moduleWithDependencies(repository = LiveJediRepository.instance(jediCollection))
+
 }
 
 fun Application.moduleWithDependencies(repository: JediRepository) {
@@ -37,4 +40,5 @@ fun Application.moduleWithDependencies(repository: JediRepository) {
             respond(repository) { JediController.getJediByUUID(call.parameters["uuid"]) }
         }
     }
+
 }

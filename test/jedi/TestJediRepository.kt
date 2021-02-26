@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.Right
 import community.flock.AppException
 import community.flock.jedi.data.Jedi
-import community.flock.jedi.pipe.JediRepository
+import community.flock.jedi.define.JediRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf

@@ -4,6 +4,7 @@ import arrow.core.Either
 import community.flock.AppException
 import community.flock.common.Reader
 import community.flock.jedi.data.Jedi
+import community.flock.jedi.define.JediRepository
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 

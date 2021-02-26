@@ -3,7 +3,7 @@ package community.flock
 import arrow.core.Either
 import com.fasterxml.jackson.databind.SerializationFeature
 import community.flock.common.Reader
-import community.flock.common.Repository
+import community.flock.common.define.Repository
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
