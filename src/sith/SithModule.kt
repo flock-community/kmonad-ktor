@@ -1,7 +1,7 @@
 package community.flock.sith
 
 import com.mongodb.ConnectionString
-import community.flock.LiveLogger
+import community.flock.common.LiveLogger
 import community.flock.common.Env.getProp
 import community.flock.common.define.Logger
 import community.flock.sith.data.Sith

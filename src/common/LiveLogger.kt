@@ -1,4 +1,4 @@
-package community.flock
+package community.flock.common
 
 import community.flock.common.define.Logger
 
