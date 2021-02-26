@@ -11,4 +11,4 @@ data class Jedi(val name: String, val age: Int) {
 
 fun Jedi.internalize() = Right(this)
 fun Flow<Jedi>.internalize() = Right(this)
-fun Result<Flow<Jedi>>.internalize() = fold({it.internalize()}, {it.internalize()})
+fun Result<Flow<Jedi>>.internalize() = fold({ it.internalize() }, { it.internalize() })
