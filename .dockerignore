@@ -1,2 +1,2 @@
 **/
-!build/libs/ktor-demo-*-SNAPSHOT.jar
+!build/libs/kmonad-*.jar

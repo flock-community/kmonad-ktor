@@ -6,6 +6,8 @@ services:
       - "27017:27017"
     restart: always
     container_name: kmonad-mongodb
+    volumes:
+      - "./db.init/:/docker-entrypoint-initdb.d/"
   service:
     build:
       context: .

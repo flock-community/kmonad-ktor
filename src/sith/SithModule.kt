@@ -1,8 +1,8 @@
 package community.flock.sith
 
-import com.mongodb.ConnectionString
-import community.flock.common.LiveLogger
+import community.flock.common.DataBase
 import community.flock.common.Env.getProp
+import community.flock.common.LiveLogger
 import community.flock.common.define.Logger
 import community.flock.sith.data.Sith
 import community.flock.sith.define.SithContext
@@ -16,18 +16,12 @@ import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.routing
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
-import org.litote.kmongo.coroutine.coroutine
-import org.litote.kmongo.reactivestreams.KMongo
 
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
 
     val host = getProp("ktor.db.host", "localhost")
-    val mongoDbClient = KMongo.createClient(ConnectionString("mongodb://$host")).coroutine
-    val sithCollection = mongoDbClient.getDatabase("test").getCollection<Sith>().also {
-        runBlocking { it.insertMany(listOf(Sith("Palpatine", 340), Sith("Anakin", 29))) }
-    }
+    val sithCollection = DataBase.instance(host).client.getDatabase("StarWars").getCollection<Sith>()
 
     moduleWith(object : SithContext {
         override val sithRepository: SithRepository = LiveSithRepository.instance(sithCollection)
