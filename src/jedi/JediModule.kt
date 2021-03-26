@@ -2,6 +2,7 @@ package community.flock.jedi
 
 import community.flock.common.DataBase
 import community.flock.common.Env.getProp
+import community.flock.common.define.DB.StarWars
 import community.flock.jedi.data.Jedi
 import community.flock.jedi.define.JediRepository
 import community.flock.jedi.pipe.JediController
@@ -17,7 +18,7 @@ import io.ktor.routing.routing
 fun Application.module() {
 
     val host = getProp("ktor.db.host", "localhost")
-    val jediCollection = DataBase.instance(host).client.getDatabase("StarWars").getCollection<Jedi>()
+    val jediCollection = DataBase.instance(host).client.getDatabase(StarWars.name).getCollection<Jedi>()
 
     moduleWithDependencies(LiveJediRepository.instance(jediCollection))
 

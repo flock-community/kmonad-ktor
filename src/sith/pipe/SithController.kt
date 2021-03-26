@@ -8,11 +8,15 @@ import community.flock.sith.pipe.SithService.getSithByUUID as serviceGetSithByUU
 
 object SithController {
 
-    suspend fun SithContext.getSithByUUID(uuidString: String?) = runCatching { UUID.fromString(uuidString) }
-        .getOrElse { throw AppException.BadRequest }
-        .let { serviceGetSithByUUID(it) }
-
+    suspend fun SithContext.getSithByUUID(uuidString: String?) =
+        serviceGetSithByUUID(validate { UUID.fromString(uuidString) })
 
     suspend fun SithContext.getAllSith() = serviceGetAllSith()
 
+}
+
+private fun <R> validate(block: () -> R) = try {
+    block()
+} catch (e: Exception) {
+    throw AppException.BadRequest
 }

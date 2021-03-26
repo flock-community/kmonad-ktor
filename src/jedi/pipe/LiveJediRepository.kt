@@ -1,26 +1,22 @@
 package community.flock.jedi.pipe
 
-import arrow.core.Either
+import arrow.core.Left
+import arrow.core.Right
+import arrow.core.flatMap
 import community.flock.AppException
-import community.flock.AppException.NotFound
-import community.flock.exception
 import community.flock.jedi.data.Jedi
-import community.flock.jedi.data.internalize
 import community.flock.jedi.define.JediRepository
-import kotlinx.coroutines.flow.Flow
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.eq
 import java.util.UUID
 
 class LiveJediRepository private constructor(private val collection: CoroutineCollection<Jedi>) : JediRepository {
 
-    override suspend fun getJediByUUID(uuid: UUID): Either<AppException, Jedi> = collection
-        .findOne(Jedi::id eq uuid.toString())
-        ?.internalize() ?: exception(NotFound(uuid))
+    override suspend fun getJediByUUID(uuid: UUID) = guard { collection.findOne(Jedi::id eq uuid.toString()) }
+        .flatMap { it?.let(::Right) ?: Left(AppException.NotFound(uuid)) }
 
 
-    override suspend fun getAllJedi(): Either<AppException, Flow<Jedi>> =
-        runCatching { collection.find().toFlow() }.internalize()
+    override suspend fun getAllJedi() = guard { collection.find().toFlow() }
 
     companion object {
         @Volatile
@@ -30,4 +26,10 @@ class LiveJediRepository private constructor(private val collection: CoroutineCo
         }
     }
 
+}
+
+private suspend fun <R> guard(block: suspend () -> R) = try {
+    Right(block())
+} catch (e: Exception) {
+    Left(AppException.InternalServerError(e.cause))
 }

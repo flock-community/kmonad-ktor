@@ -8,9 +8,9 @@ import java.util.UUID
 
 class LiveSithRepository private constructor(private val collection: CoroutineCollection<Sith>) : SithRepository {
     override suspend fun getSithByUUID(uuid: UUID): Sith =
-        collection.findOneById(uuid.toString()) ?: throw AppException.NotFound(uuid)
+        guard { collection.findOneById(uuid.toString()) } ?: throw AppException.NotFound(uuid)
 
-    override suspend fun getAllSith() = collection.find().toFlow()
+    override suspend fun getAllSith() = guard { collection.find().toFlow() }
 
     companion object {
         @Volatile
@@ -20,4 +20,10 @@ class LiveSithRepository private constructor(private val collection: CoroutineCo
         }
     }
 
+}
+
+private suspend fun <R> guard(block: suspend () -> R) = try {
+    block()
+} catch (e: Exception) {
+    throw AppException.InternalServerError(e.cause)
 }

@@ -3,6 +3,7 @@ package community.flock.sith
 import community.flock.common.DataBase
 import community.flock.common.Env.getProp
 import community.flock.common.LiveLogger
+import community.flock.common.define.DB.StarWars
 import community.flock.common.define.Logger
 import community.flock.sith.data.Sith
 import community.flock.sith.define.SithContext
@@ -21,7 +22,7 @@ import kotlinx.coroutines.flow.toList
 fun Application.module() {
 
     val host = getProp("ktor.db.host", "localhost")
-    val sithCollection = DataBase.instance(host).client.getDatabase("StarWars").getCollection<Sith>()
+    val sithCollection = DataBase.instance(host).client.getDatabase(StarWars.name).getCollection<Sith>()
 
     moduleWith(object : SithContext {
         override val sithRepository: SithRepository = LiveSithRepository.instance(sithCollection)

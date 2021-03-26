@@ -2,7 +2,7 @@ package community.flock.common
 
 class Reader<D, out A>(val run: suspend (D) -> A) {
 
-    inline fun <B> map(crossinline fa: (A) -> B): Reader<D, B> = Reader { d ->
+    inline fun <B> map(crossinline fa: suspend (A) -> B): Reader<D, B> = Reader { d ->
         fa(run(d))
     }
 
