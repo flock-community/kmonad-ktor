@@ -10,3 +10,7 @@ interface SithRepository : Repository {
 
     suspend fun getAllSith(): Flow<Sith>
 }
+
+interface HasSithRepository {
+    val repository: SithRepository
+}

@@ -12,3 +12,7 @@ interface JediRepository : Repository {
 
     suspend fun getAllJedi(): Either<AppException, Flow<Jedi>>
 }
+
+interface HasJediRepository {
+    val jediRepo: JediRepository
+}

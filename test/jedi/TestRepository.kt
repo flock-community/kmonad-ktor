@@ -1,4 +1,4 @@
-package community.flock.jedi
+package jedi
 
 import arrow.core.Either
 import arrow.core.Right
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import java.util.UUID
 
-object TestJediRepository : JediRepository {
+object TestRepository : JediRepository {
     override suspend fun getJediByUUID(uuid: UUID): Either<AppException, Jedi> = getAllJedi()
         .map { it.first() }
 

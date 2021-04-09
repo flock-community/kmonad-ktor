@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import java.util.UUID
 
-object TestSithRepository : SithRepository {
+object TestRepository : SithRepository {
     override suspend fun getSithByUUID(uuid: UUID): Sith = getAllSith().first()
 
     override suspend fun getAllSith(): Flow<Sith> = flowOf(Sith("Kasper", 32), Sith("Willem", 34))

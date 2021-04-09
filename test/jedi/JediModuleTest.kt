@@ -1,5 +1,6 @@
-package community.flock.jedi
+package jedi
 
+import community.flock.jedi.moduleWithDependencies
 import community.flock.main
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -39,7 +40,7 @@ class JediModuleTest {
     private fun setup(block: TestApplicationEngine.() -> TestApplicationCall) {
         withTestApplication({
             main()
-            moduleWithDependencies(TestJediRepository)
+            moduleWithDependencies(TestRepository)
         }) { block() }
     }
 

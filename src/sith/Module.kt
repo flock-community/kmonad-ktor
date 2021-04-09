@@ -6,11 +6,11 @@ import community.flock.common.LiveLogger
 import community.flock.common.define.DB.StarWars
 import community.flock.common.define.Logger
 import community.flock.sith.data.Sith
-import community.flock.sith.define.SithContext
+import community.flock.sith.define.Context
 import community.flock.sith.define.SithRepository
-import community.flock.sith.pipe.LiveSithRepository
-import community.flock.sith.pipe.SithController.getAllSith
-import community.flock.sith.pipe.SithController.getSithByUUID
+import community.flock.sith.pipe.LiveRepository
+import community.flock.sith.pipe.Controller.bindGetAllSith
+import community.flock.sith.pipe.Controller.bindGetSithByUUID
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.response.respond
@@ -24,22 +24,22 @@ fun Application.module() {
     val host = getProp("ktor.db.host", "localhost")
     val sithCollection = DataBase.instance(host).client.getDatabase(StarWars.name).getCollection<Sith>()
 
-    moduleWith(object : SithContext {
-        override val sithRepository: SithRepository = LiveSithRepository.instance(sithCollection)
+    moduleWith(object : Context {
+        override val repository: SithRepository = LiveRepository.instance(sithCollection)
         override val logger: Logger = LiveLogger
     })
 
 }
 
-fun Application.moduleWith(ctx: SithContext) {
+fun Application.moduleWith(ctx: Context) {
 
     routing {
         get("/sith") {
-            call.respond(ctx.getAllSith().toList())
+            call.respond(ctx.bindGetAllSith().toList())
         }
 
         get("/sith/{uuid}") {
-            call.respond(ctx.getSithByUUID(call.parameters["uuid"]))
+            call.respond(ctx.bindGetSithByUUID(call.parameters["uuid"]))
         }
     }
 

@@ -6,7 +6,7 @@ import community.flock.sith.define.SithRepository
 import org.litote.kmongo.coroutine.CoroutineCollection
 import java.util.UUID
 
-class LiveSithRepository private constructor(private val collection: CoroutineCollection<Sith>) : SithRepository {
+class LiveRepository private constructor(private val collection: CoroutineCollection<Sith>) : SithRepository {
     override suspend fun getSithByUUID(uuid: UUID): Sith =
         guard { collection.findOneById(uuid.toString()) } ?: throw AppException.NotFound(uuid)
 
@@ -14,9 +14,9 @@ class LiveSithRepository private constructor(private val collection: CoroutineCo
 
     companion object {
         @Volatile
-        private var INSTANCE: LiveSithRepository? = null
-        fun instance(collection: CoroutineCollection<Sith>): LiveSithRepository = INSTANCE ?: synchronized(this) {
-            INSTANCE ?: LiveSithRepository(collection).also { INSTANCE = it }
+        private var INSTANCE: LiveRepository? = null
+        fun instance(collection: CoroutineCollection<Sith>): LiveRepository = INSTANCE ?: synchronized(this) {
+            INSTANCE ?: LiveRepository(collection).also { INSTANCE = it }
         }
     }
 

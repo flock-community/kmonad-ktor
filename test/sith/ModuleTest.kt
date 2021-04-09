@@ -1,10 +1,8 @@
 package sith
 
 import common.TestLogger
-import community.flock.common.define.Logger
 import community.flock.main
-import community.flock.sith.define.SithContext
-import community.flock.sith.define.SithRepository
+import community.flock.sith.define.Context
 import community.flock.sith.moduleWith
 import io.ktor.http.HttpMethod
 import io.ktor.server.testing.TestApplicationCall
@@ -17,7 +15,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class SithModuleTest {
+class ModuleTest {
 
     @Test
     fun testAllSith() = setup {
@@ -38,9 +36,9 @@ class SithModuleTest {
     private fun setup(block: TestApplicationEngine.() -> TestApplicationCall) {
         withTestApplication({
             main()
-            moduleWith(object : SithContext {
-                override val sithRepository: SithRepository = TestSithRepository
-                override val logger: Logger = TestLogger
+            moduleWith(object : Context {
+                override val repository = TestRepository
+                override val logger = TestLogger
             })
         }) { block() }
     }
