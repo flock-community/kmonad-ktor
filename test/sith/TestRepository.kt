@@ -1,14 +1,17 @@
 package sith
 
 import community.flock.sith.data.Sith
-import community.flock.sith.define.SithRepository
-import kotlinx.coroutines.flow.Flow
+import community.flock.sith.define.Repository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import java.util.UUID
 
-object TestRepository : SithRepository {
-    override suspend fun getSithByUUID(uuid: UUID): Sith = getAllSith().first()
+object TestRepository : Repository {
+    override suspend fun getAll() = flowOf(Sith("Kasper", 32), Sith("Willem", 34))
 
-    override suspend fun getAllSith(): Flow<Sith> = flowOf(Sith("Kasper", 32), Sith("Willem", 34))
+    override suspend fun getByUUID(uuid: UUID) = getAll().first()
+
+    override suspend fun save(sith: Sith) = sith
+
+    override suspend fun deleteByUUID(uuid: UUID) = getByUUID(uuid)
 }

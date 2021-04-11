@@ -1,22 +1,17 @@
 package community.flock.sith.pipe
 
 import community.flock.AppException
-import community.flock.sith.pipe.Service.bindGetSithByUUID
-import community.flock.sith.pipe.Service.getAllSith
+import community.flock.sith.data.Sith
+import community.flock.sith.define.Context
 import java.util.UUID
 
-object Controller {
+suspend fun Context.bindGet() = getAll()
 
-    interface GetSithByUUID : Service.GetSithByUUID
+suspend fun Context.bindGet(uuidString: String?) = getByUUID(validate { UUID.fromString(uuidString) })
 
-    suspend fun GetSithByUUID.bindGetSithByUUID(uuidString: String?) =
-        bindGetSithByUUID(validate { UUID.fromString(uuidString) })
+suspend fun Context.bindPost(sith: Sith) = save(sith)
 
-    interface GetAllSith : Service.GetAllSith
-
-    suspend fun GetAllSith.bindGetAllSith() = getAllSith()
-
-}
+suspend fun Context.bindDelete(uuidString: String?) = deleteByUUID(validate { UUID.fromString(uuidString) })
 
 private fun <R> validate(block: () -> R) = try {
     block()

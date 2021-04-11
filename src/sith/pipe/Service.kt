@@ -1,18 +1,15 @@
 package community.flock.sith.pipe
 
 import community.flock.common.define.HasLogger
-import community.flock.sith.define.HasSithRepository
+import community.flock.sith.data.Sith
+import community.flock.sith.define.HasRepository
 import java.util.UUID
 
-object Service {
+suspend fun <D> D.getAll() where D : HasRepository, D : HasLogger = repository.getAll()
+    .also { logger.log(it.toString()) }
 
-    interface GetSithByUUID : HasSithRepository
+suspend fun <D> D.getByUUID(uuid: UUID) where D : HasRepository = repository.getByUUID(uuid)
 
-    suspend fun GetSithByUUID.bindGetSithByUUID(uuid: UUID) = repository.getSithByUUID(uuid)
+suspend fun <D> D.save(sith: Sith) where D : HasRepository = repository.save(sith)
 
-    interface GetAllSith : HasSithRepository, HasLogger
-
-    suspend fun GetAllSith.getAllSith() = repository.getAllSith()
-        .also { logger.log(it.toString()) };
-
-}
+suspend fun <D> D.deleteByUUID(uuid: UUID) where D : HasRepository = repository.deleteByUUID(uuid)

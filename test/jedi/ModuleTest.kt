@@ -1,5 +1,7 @@
 package jedi
 
+import common.TestLogger
+import community.flock.jedi.define.Context
 import community.flock.jedi.moduleWithDependencies
 import community.flock.main
 import io.ktor.http.HttpMethod
@@ -15,7 +17,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class JediModuleTest {
+class ModuleTest {
 
     @Test
     fun getAllJedi() = setup {
@@ -40,7 +42,10 @@ class JediModuleTest {
     private fun setup(block: TestApplicationEngine.() -> TestApplicationCall) {
         withTestApplication({
             main()
-            moduleWithDependencies(TestRepository)
+            moduleWithDependencies(object : Context {
+                override val logger = TestLogger
+                override val repository = TestRepository
+            })
         }) { block() }
     }
 

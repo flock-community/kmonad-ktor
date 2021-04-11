@@ -1,5 +1,5 @@
 package community.flock.sith.define
 
-import community.flock.sith.pipe.Controller
+import community.flock.common.define.HasLogger
 
-interface Context : Controller.GetAllSith, Controller.GetSithByUUID
+interface Context : HasRepository, HasLogger

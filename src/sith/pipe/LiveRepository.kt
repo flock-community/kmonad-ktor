@@ -2,15 +2,24 @@ package community.flock.sith.pipe
 
 import community.flock.AppException
 import community.flock.sith.data.Sith
-import community.flock.sith.define.SithRepository
+import community.flock.sith.define.Repository
 import org.litote.kmongo.coroutine.CoroutineCollection
 import java.util.UUID
 
-class LiveRepository private constructor(private val collection: CoroutineCollection<Sith>) : SithRepository {
-    override suspend fun getSithByUUID(uuid: UUID): Sith =
+class LiveRepository private constructor(private val collection: CoroutineCollection<Sith>) : Repository {
+
+    override suspend fun getAll() = guard { collection.find().toFlow() }
+
+    override suspend fun getByUUID(uuid: UUID): Sith =
         guard { collection.findOneById(uuid.toString()) } ?: throw AppException.NotFound(uuid)
 
-    override suspend fun getAllSith() = guard { collection.find().toFlow() }
+    override suspend fun save(sith: Sith) = guard { collection.save(sith) }
+        ?.run { if (wasAcknowledged()) sith else null } ?: throw AppException.BadRequest
+
+    override suspend fun deleteByUUID(uuid: UUID) = getByUUID(uuid).let {
+        guard { collection.deleteOneById(it.id) }
+            .run { if (wasAcknowledged()) it else null }
+    } ?: throw AppException.BadRequest
 
     companion object {
         @Volatile
@@ -19,7 +28,6 @@ class LiveRepository private constructor(private val collection: CoroutineCollec
             INSTANCE ?: LiveRepository(collection).also { INSTANCE = it }
         }
     }
-
 }
 
 private suspend fun <R> guard(block: suspend () -> R) = try {
