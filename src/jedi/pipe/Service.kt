@@ -6,14 +6,14 @@ import community.flock.jedi.data.Jedi
 import community.flock.jedi.define.HasRepository
 import java.util.UUID
 
-suspend fun <D> getAllJedi() where D : HasRepository, D : HasLogger = ask<D>()
-    .map { d -> d.repository.getAll().apply { map { d.logger.log(it.toString()) } } }
+suspend fun <D> getAll() where D : HasRepository, D : HasLogger = ask<D>()
+    .map { d -> d.jediRepository.getAll().apply { map { d.logger.log(it.toString()) } } }
 
-suspend fun <D> getJediByUUID(uuid: UUID) where D : HasRepository = ask<D>()
-    .map { it.repository.getByUUID(uuid) }
+suspend fun <D> getByUUID(uuid: UUID) where D : HasRepository = ask<D>()
+    .map { it.jediRepository.getByUUID(uuid) }
 
 suspend fun <D> save(jedi: Jedi) where D : HasRepository = ask<D>()
-    .map { it.repository.save(jedi) }
+    .map { it.jediRepository.save(jedi) }
 
 suspend fun <D> deleteByUUID(uuid: UUID) where D : HasRepository = ask<D>()
-    .map { it.repository.deleteByUUID(uuid) }
+    .map { it.jediRepository.deleteByUUID(uuid) }

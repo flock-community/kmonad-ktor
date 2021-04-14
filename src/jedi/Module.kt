@@ -36,7 +36,7 @@ fun Application.module() {
 
     moduleWithDependencies(object : Context {
         override val logger = LiveLogger
-        override val repository = LiveRepository.instance(jediCollection)
+        override val jediRepository = LiveRepository.instance(jediCollection)
     })
 
 }

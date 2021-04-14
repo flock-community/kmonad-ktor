@@ -18,5 +18,5 @@ interface Repository : Dependency {
 }
 
 interface HasRepository {
-    val repository: Repository
+    val jediRepository: Repository
 }

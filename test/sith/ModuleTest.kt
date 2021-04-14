@@ -37,7 +37,7 @@ class ModuleTest {
         withTestApplication({
             main()
             moduleWith(object : Context {
-                override val repository = TestRepository
+                override val sithRepository = TestRepository
                 override val logger = TestLogger
             })
         }) { block() }

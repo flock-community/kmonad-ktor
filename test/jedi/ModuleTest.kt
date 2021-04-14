@@ -44,7 +44,7 @@ class ModuleTest {
             main()
             moduleWithDependencies(object : Context {
                 override val logger = TestLogger
-                override val repository = TestRepository
+                override val jediRepository = TestRepository
             })
         }) { block() }
     }

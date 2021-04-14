@@ -9,10 +9,10 @@ import community.flock.toReader
 import java.util.UUID
 
 
-suspend fun bindGet() = getAllJedi<Context>()
+suspend fun bindGet() = getAll<Context>()
 
 suspend fun bindGet(uuidString: String?) = validate { UUID.fromString(uuidString) }
-    .fold({ it.toReader() }, { getJediByUUID<Context>(it) })
+    .fold({ it.toReader() }, { getByUUID<Context>(it) })
 
 suspend fun bindPost(jedi: Jedi) = save<Context>(jedi)
 
@@ -23,5 +23,5 @@ suspend fun bindDelete(uuidString: String?) = validate { UUID.fromString(uuidStr
 private fun <R> validate(block: () -> R) = try {
     Right(block())
 } catch (e: Exception) {
-    Left(AppException.BadRequest)
+    Left(AppException.BadRequest())
 }

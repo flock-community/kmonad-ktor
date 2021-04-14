@@ -18,11 +18,11 @@ class LiveRepository private constructor(private val collection: CoroutineCollec
         .flatMap { it?.let(::Right) ?: Left(AppException.NotFound(uuid)) }
 
     override suspend fun save(jedi: Jedi) = guard { collection.insertOne(jedi) }
-        .flatMap { if (it.wasAcknowledged()) Right(jedi) else Left(AppException.BadRequest) }
+        .flatMap { if (it.wasAcknowledged()) Right(jedi) else Left(AppException.BadRequest()) }
 
     override suspend fun deleteByUUID(uuid: UUID) = getByUUID(uuid).flatMap { jedi ->
-        guard { collection.deleteOneById(jedi.id) }.flatMap {
-            if (it.wasAcknowledged()) Right(jedi) else Left(AppException.BadRequest)
+        guard { collection.deleteOne(Jedi::id eq uuid.toString()) }.flatMap {
+            if (it.wasAcknowledged()) Right(jedi) else Left(AppException.BadRequest())
         }
     }
 

@@ -16,5 +16,5 @@ suspend fun Context.bindDelete(uuidString: String?) = deleteByUUID(validate { UU
 private fun <R> validate(block: () -> R) = try {
     block()
 } catch (e: Exception) {
-    throw AppException.BadRequest
+    throw AppException.BadRequest()
 }
