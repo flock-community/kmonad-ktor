@@ -17,10 +17,7 @@ import community.flock.sith.pipe.getByUUID as getSithByUUID
 
 @ExperimentalCoroutinesApi
 suspend fun Context.bindGet(): Flow<ForceWielder> = getAllJedi<JediContext>()
-    .run(object : JediContext {
-        override val logger = this@bindGet.logger
-        override val jediRepository = this@bindGet.jediRepository
-    })
+    .run(this)
     .getOrHandle { throw it }
     .map { ForceWielder(it.name, it.age, it.id) } + getAllSith()
     .map { ForceWielder(it.name, it.age, it.id) }
@@ -30,10 +27,7 @@ suspend fun Context.bindGet(uuidString: String?): ForceWielder {
     val uuid = validate { UUID.fromString(uuidString) }
 
     val jedi = getJediByUUID<JediContext>(uuid)
-        .run(object : JediContext {
-            override val logger = this@bindGet.logger
-            override val jediRepository = this@bindGet.jediRepository
-        })
+        .run(this)
         .map { ForceWielder(it.name, it.age, it.id) }
         .orNull()
 
@@ -49,7 +43,6 @@ suspend fun Context.bindGet(uuidString: String?): ForceWielder {
         else -> both.either()
     }
 }
-
 
 @ExperimentalCoroutinesApi
 private operator fun Flow<ForceWielder>.plus(f: Flow<ForceWielder>) = merge(this, f)
