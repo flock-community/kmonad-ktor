@@ -4,10 +4,8 @@ import community.flock.AppException
 import community.flock.common.DataBase
 import community.flock.common.Env.getProp
 import community.flock.common.LiveLogger
-import community.flock.common.define.DB.StarWars
-import community.flock.jedi.data.Jedi
 import community.flock.jedi.define.Context
-import community.flock.jedi.pipe.LiveRepository
+import community.flock.jedi.pipe.LiveRepository.Companion.liveRepository
 import community.flock.jedi.pipe.bindDelete
 import community.flock.jedi.pipe.bindGet
 import community.flock.jedi.pipe.bindPost
@@ -32,11 +30,10 @@ typealias Ctx = PipelineContext<Unit, ApplicationCall>
 fun Application.module() {
 
     val host = getProp("ktor.db.host", "localhost")
-    val jediCollection = DataBase.instance(host).client.getDatabase(StarWars.name).getCollection<Jedi>()
 
     moduleWithDependencies(object : Context {
         override val logger = LiveLogger
-        override val jediRepository = LiveRepository.instance(jediCollection)
+        override val jediRepository = DataBase.instance(host).liveRepository()
     })
 
 }

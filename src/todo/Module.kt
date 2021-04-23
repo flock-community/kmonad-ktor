@@ -3,10 +3,8 @@ package community.flock.todo
 import community.flock.AppException
 import community.flock.common.DataBase
 import community.flock.common.Env.getProp
-import community.flock.common.define.DB.StarWars
-import community.flock.todo.data.Todo
 import community.flock.todo.define.Context
-import community.flock.todo.pipe.LiveRepository
+import community.flock.todo.pipe.LiveRepository.Companion.liveRepository
 import community.flock.todo.pipe.bindDelete
 import community.flock.todo.pipe.bindGet
 import community.flock.todo.pipe.bindPost
@@ -31,10 +29,9 @@ typealias Ctx = PipelineContext<Unit, ApplicationCall>
 fun Application.module() {
 
     val host = getProp("ktor.db.host", "localhost")
-    val collection = DataBase.instance(host).client.getDatabase(StarWars.name).getCollection<Todo>()
 
     moduleWith(object : Context {
-        override val toDoRepository = LiveRepository.instance(collection)
+        override val toDoRepository = DataBase.instance(host).liveRepository()
     })
 
 }

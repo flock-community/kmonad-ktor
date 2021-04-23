@@ -4,11 +4,9 @@ import community.flock.AppException
 import community.flock.common.DataBase
 import community.flock.common.Env.getProp
 import community.flock.common.LiveLogger
-import community.flock.common.define.DB.StarWars
 import community.flock.common.define.Logger
-import community.flock.sith.data.Sith
 import community.flock.sith.define.Context
-import community.flock.sith.pipe.LiveRepository
+import community.flock.sith.pipe.LiveRepository.Companion.liveRepository
 import community.flock.sith.pipe.bindDelete
 import community.flock.sith.pipe.bindGet
 import community.flock.sith.pipe.bindPost
@@ -33,10 +31,9 @@ typealias Ctx = PipelineContext<Unit, ApplicationCall>
 fun Application.module() {
 
     val host = getProp("ktor.db.host", "localhost")
-    val collection = DataBase.instance(host).client.getDatabase(StarWars.name).getCollection<Sith>()
 
     moduleWith(object : Context {
-        override val sithRepository = LiveRepository.instance(collection)
+        override val sithRepository = DataBase.instance(host).liveRepository()
         override val logger: Logger = LiveLogger
     })
 

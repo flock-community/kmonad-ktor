@@ -1,19 +1,18 @@
 package community.flock.todo.define
 
 import community.flock.common.define.Dependency
-
-import community.flock.todo.data.Todo
+import community.flock.todo.data.ToDo
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
 interface Repository : Dependency {
-    suspend fun getAll(): Flow<Todo>
+    suspend fun getAll(): Flow<ToDo>
 
-    suspend fun getByUUID(uuid: UUID): Todo
+    suspend fun getByUUID(uuid: UUID): ToDo
 
-    suspend fun save(todo: Todo): Todo
+    suspend fun save(toDo: ToDo): ToDo
 
-    suspend fun deleteByUUID(uuid: UUID): Todo
+    suspend fun deleteByUUID(uuid: UUID): ToDo
 }
 
 interface HasRepository {

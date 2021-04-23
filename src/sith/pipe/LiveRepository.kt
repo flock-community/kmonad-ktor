@@ -1,6 +1,8 @@
 package community.flock.sith.pipe
 
 import community.flock.AppException
+import community.flock.common.DataBase
+import community.flock.common.define.DB
 import community.flock.sith.data.Sith
 import community.flock.sith.define.Repository
 import org.litote.kmongo.coroutine.CoroutineCollection
@@ -23,11 +25,12 @@ class LiveRepository private constructor(private val collection: CoroutineCollec
     }
 
     companion object {
+        fun DataBase.liveRepository() = instance(client.getDatabase(DB.StarWars.name).getCollection())
+
         @Volatile
         private var INSTANCE: LiveRepository? = null
-        fun instance(collection: CoroutineCollection<Sith>): LiveRepository = INSTANCE ?: synchronized(this) {
-            INSTANCE ?: LiveRepository(collection).also { INSTANCE = it }
-        }
+        private fun instance(collection: CoroutineCollection<Sith>): LiveRepository =
+            INSTANCE ?: synchronized(this) { INSTANCE ?: LiveRepository(collection).also { INSTANCE = it } }
     }
 }
 

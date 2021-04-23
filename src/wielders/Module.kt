@@ -4,10 +4,7 @@ import community.flock.AppException
 import community.flock.common.DataBase
 import community.flock.common.Env.getProp
 import community.flock.common.LiveLogger
-import community.flock.common.define.DB.StarWars
 import community.flock.common.define.Logger
-import community.flock.jedi.data.Jedi
-import community.flock.sith.data.Sith
 import community.flock.wielders.define.Context
 import community.flock.wielders.pipe.bindGet
 import io.ktor.application.Application
@@ -22,8 +19,8 @@ import io.ktor.routing.routing
 import io.ktor.util.pipeline.PipelineContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
-import community.flock.jedi.pipe.LiveRepository as LiveJediRepository
-import community.flock.sith.pipe.LiveRepository as LiveSithRepository
+import community.flock.jedi.pipe.LiveRepository.Companion.liveRepository as liveJediRepository
+import community.flock.sith.pipe.LiveRepository.Companion.liveRepository as liveSithRepository
 
 typealias Ctx = PipelineContext<Unit, ApplicationCall>
 
@@ -32,13 +29,11 @@ typealias Ctx = PipelineContext<Unit, ApplicationCall>
 fun Application.module() {
 
     val host = getProp("ktor.db.host", "localhost")
-    val db = DataBase.instance(host).client.getDatabase(StarWars.name)
-    val jediCollection = db.getCollection<Jedi>()
-    val sithCollection = db.getCollection<Sith>()
+    val db = DataBase.instance(host)
 
     moduleWith(object : Context {
-        override val jediRepository = LiveJediRepository.instance(jediCollection)
-        override val sithRepository = LiveSithRepository.instance(sithCollection)
+        override val jediRepository = db.liveJediRepository()
+        override val sithRepository = db.liveSithRepository()
         override val logger: Logger = LiveLogger
     })
 

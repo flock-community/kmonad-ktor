@@ -4,6 +4,8 @@ import arrow.core.Left
 import arrow.core.Right
 import arrow.core.flatMap
 import community.flock.AppException
+import community.flock.common.DataBase
+import community.flock.common.define.DB
 import community.flock.jedi.data.Jedi
 import community.flock.jedi.define.Repository
 import org.litote.kmongo.coroutine.CoroutineCollection
@@ -27,11 +29,12 @@ class LiveRepository private constructor(private val collection: CoroutineCollec
     }
 
     companion object {
+        fun DataBase.liveRepository() = instance(client.getDatabase(DB.StarWars.name).getCollection())
+
         @Volatile
         private var INSTANCE: LiveRepository? = null
-        fun instance(collection: CoroutineCollection<Jedi>): LiveRepository = INSTANCE ?: synchronized(this) {
-            INSTANCE ?: LiveRepository(collection).also { INSTANCE = it }
-        }
+        private fun instance(collection: CoroutineCollection<Jedi>): LiveRepository =
+            INSTANCE ?: synchronized(this) { INSTANCE ?: LiveRepository(collection).also { INSTANCE = it } }
     }
 
 }
