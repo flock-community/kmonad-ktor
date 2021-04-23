@@ -1,0 +1,26 @@
+GET http://localhost:8080/sith
+Accept: application/json
+
+###
+
+GET http://localhost:8080/sith/c1cd2cc7-1fa8-47de-b528-33b090654fdf
+Accept: application/json
+
+###
+
+POST http://localhost:8080/sith
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id": "1519c913-9aba-4c65-99c3-e25de0b40773",
+  "name": "Darth Maul",
+  "age": 346
+}
+
+###
+
+DELETE http://localhost:8080/sith/1519c913-9aba-4c65-99c3-e25de0b40773
+Accept: application/json
+
+###

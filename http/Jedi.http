@@ -1,0 +1,26 @@
+GET http://localhost:8080/jedi
+Accept: application/json
+
+###
+
+GET http://localhost:8080/jedi/f04e5e8a-7b8d-4519-9a8b-8d04101086f7
+Accept: application/json
+
+###
+
+POST http://localhost:8080/jedi
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id": "46aa401d-ccab-4dbb-8eca-1136c4b808c9",
+  "name": "Cal Kestis",
+  "age": 27
+}
+
+###
+
+DELETE http://localhost:8080/jedi/46aa401d-ccab-4dbb-8eca-1136c4b808c9
+Accept: application/json
+
+###
