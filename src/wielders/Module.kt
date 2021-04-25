@@ -1,28 +1,25 @@
 package community.flock.wielders
 
+import com.papsign.ktor.openapigen.route.apiRouting
+import com.papsign.ktor.openapigen.route.path.normal.get
+import com.papsign.ktor.openapigen.route.response.respond
+import com.papsign.ktor.openapigen.route.route
+import com.papsign.ktor.openapigen.route.throws
 import community.flock.AppException
 import community.flock.common.DataBase
 import community.flock.common.Env.getProp
 import community.flock.common.LiveLogger
+import community.flock.common.UuidParam
 import community.flock.common.define.Logger
+import community.flock.wielders.data.ForceWielder
 import community.flock.wielders.define.Context
 import community.flock.wielders.pipe.bindGet
 import io.ktor.application.Application
-import io.ktor.application.ApplicationCall
-import io.ktor.application.call
-import io.ktor.http.HttpStatusCode.Companion.BadRequest
-import io.ktor.http.HttpStatusCode.Companion.InternalServerError
-import io.ktor.http.HttpStatusCode.Companion.NotFound
-import io.ktor.response.respond
-import io.ktor.routing.get
-import io.ktor.routing.routing
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import community.flock.jedi.pipe.LiveRepository.Companion.liveRepository as liveJediRepository
 import community.flock.sith.pipe.LiveRepository.Companion.liveRepository as liveSithRepository
-
-typealias Ctx = PipelineContext<Unit, ApplicationCall>
 
 @ExperimentalCoroutinesApi
 @Suppress("unused") // Referenced in application.conf
@@ -41,26 +38,18 @@ fun Application.module() {
 
 @ExperimentalCoroutinesApi
 fun Application.moduleWith(context: Context) {
-    routing {
-        get("/force-wielders") {
-            handle { call.respond(context.bindGet().toList()) }
-        }
+    apiRouting {
+        route("/force-wielders")
+            .throws(HttpStatusCode.InternalServerError, AppException.InternalServerError::class)
+            .throws(HttpStatusCode.BadRequest, AppException.BadRequest::class)
+            .throws(HttpStatusCode.NotFound, AppException.NotFound::class) {
+                get<Unit, List<ForceWielder>> {
+                    respond(context.bindGet().toList())
+                }
 
-        get("/force-wielders/{uuid}") {
-            handle { call.respond(context.bindGet(call.parameters["uuid"])) }
-        }
+                get<UuidParam, ForceWielder> { params ->
+                    respond(context.bindGet(params.uuid))
+                }
+            }
     }
-}
-
-suspend fun <R> Ctx.handle(block: suspend () -> R) = try {
-    block()
-} catch (e: AppException) {
-    call.respond(
-        when (e) {
-            is AppException.BadRequest -> BadRequest
-            is AppException.NotFound -> NotFound
-            is AppException.InternalServerError -> InternalServerError
-        },
-        e.message ?: ""
-    )
 }

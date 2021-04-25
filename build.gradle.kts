@@ -5,6 +5,7 @@ val ktor_version: String by project
 val kotlin_version: String by project
 val arrow_version: String by project
 val kmongo_version: String by project
+val swagger_generator_version: String by project
 
 plugins {
     application
@@ -24,6 +25,7 @@ repositories {
     jcenter()
     maven { url = uri("https://kotlin.bintray.com/ktor") }
     maven { url = uri("https://dl.bintray.com/arrow-kt/arrow-kt/") }
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
@@ -39,6 +41,7 @@ dependencies {
     implementation("io.arrow-kt:arrow-fx:$arrow_version")
     implementation("io.arrow-kt:arrow-optics:$arrow_version")
     implementation("io.arrow-kt:arrow-syntax:$arrow_version")
+    implementation("com.github.papsign:Ktor-OpenAPI-Generator:$swagger_generator_version")
     kapt("io.arrow-kt:arrow-meta:$arrow_version")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
 }

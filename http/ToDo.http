@@ -17,8 +17,8 @@ Content-Type: application/json
   "title": "Title3",
   "description": "Description3",
   "completed": false,
-  "createdAt": "2020-01-01",
-  "dueDate": "2020-02-02"
+  "createdAt": "2020-01-01T00:00:00",
+  "dueDate": "2020-02-02T00:00:00"
 }
 
 ###

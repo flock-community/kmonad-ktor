@@ -18,23 +18,23 @@ starWars.sith.insertMany([
 
 toDos = client.getDB("ToDos");
 
-toDos.createCollection("toDo", {capped: false})
+toDos.createCollection("todo", {capped: false})
 
-toDos.toDo.insertMany([
+toDos.todo.insertMany([
     {
         id: "e2c1281f-ad63-44bf-920f-fe78bd5c896c",
         title: "Title",
         description: "Description",
         completed: false,
-        createdAt: "2020-01-01",
-        dueDate: "2020-02-02"
+        createdAt: "2020-01-01T00:00:00",
+        dueDate: "2020-02-02T00:00:00"
     },
     {
         id: "670c04cf-9359-419a-9e69-093e07b4620f",
         title: "Title2",
         description: "Description2",
         completed: true,
-        createdAt: "2020-02-02",
-        dueDate: "2020-03-03"
+        createdAt: "2020-02-02T00:00:00",
+        dueDate: "2020-03-03T00:00:00"
     }
 ])

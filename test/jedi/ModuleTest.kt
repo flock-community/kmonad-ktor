@@ -2,7 +2,7 @@ package jedi
 
 import common.TestLogger
 import community.flock.jedi.define.Context
-import community.flock.jedi.moduleWithDependencies
+import community.flock.jedi.moduleWith
 import community.flock.main
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -42,7 +42,7 @@ class ModuleTest {
     private fun setup(block: TestApplicationEngine.() -> TestApplicationCall) {
         withTestApplication({
             main()
-            moduleWithDependencies(object : Context {
+            moduleWith(object : Context {
                 override val logger = TestLogger
                 override val jediRepository = TestRepository
             })
