@@ -28,7 +28,7 @@ fun Application.main() {
     install(OpenAPIGen) {
         // basic info
         info {
-            version = "0.0.1"
+            version = "0.0.1-SNAPSHOT"
             title = "Test API"
             description = "The Test API"
             contact {
@@ -42,10 +42,9 @@ fun Application.main() {
         }
         //optional custom schema object namer
         replaceModule(DefaultSchemaNamer, object : SchemaNamer {
-            val regex = Regex("[A-Za-z0-9_.]+")
-            override fun get(type: KType): String {
-                return type.toString().replace(regex) { it.value.split(".").last() }.replace(Regex(">|<|, "), "_")
-            }
+            override fun get(type: KType): String = type.toString()
+                .replace(Regex("[A-Za-z0-9_.]+")) { it.value.split(".").last() }
+                .replace(Regex(">|<|, "), "_")
         })
     }
 
