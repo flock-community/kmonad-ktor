@@ -5,6 +5,8 @@ import community.flock.sith.data.Sith
 import community.flock.sith.define.HasRepository
 import java.util.UUID
 
+
+
 suspend fun <D> D.getAll() where D : HasRepository, D : HasLogger = sithRepository.getAll()
     .also { logger.log(it.toString()) }
 

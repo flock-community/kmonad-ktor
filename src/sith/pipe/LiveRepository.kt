@@ -1,15 +1,20 @@
 package community.flock.sith.pipe
 
 import community.flock.AppException
-import community.flock.common.DataBase
 import community.flock.common.define.DB
+import community.flock.common.define.HasDatabaseClient
+import community.flock.common.define.HasLogger
+import community.flock.jedi.pipe.LiveRepositoryContext
 import community.flock.sith.data.Sith
 import community.flock.sith.define.Repository
-import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.eq
 import java.util.UUID
 
-class LiveRepository private constructor(private val collection: CoroutineCollection<Sith>) : Repository {
+interface LiveRepositoryContext : HasDatabaseClient, HasLogger
+
+class LiveRepository(ctx: LiveRepositoryContext) : Repository {
+
+    private val collection = ctx.databaseClient.getDatabase(DB.StarWars.name).getCollection<Sith>()
 
     override suspend fun getAll() = guard { collection.find().toFlow() }
 
@@ -24,14 +29,6 @@ class LiveRepository private constructor(private val collection: CoroutineCollec
             .run { if (wasAcknowledged()) it else throw AppException.BadRequest() }
     }
 
-    companion object {
-        fun DataBase.liveRepository() = instance(client.getDatabase(DB.StarWars.name).getCollection())
-
-        @Volatile
-        private var INSTANCE: LiveRepository? = null
-        private fun instance(collection: CoroutineCollection<Sith>): LiveRepository =
-            INSTANCE ?: synchronized(this) { INSTANCE ?: LiveRepository(collection).also { INSTANCE = it } }
-    }
 }
 
 private suspend fun <R> guard(block: suspend () -> R) = try {

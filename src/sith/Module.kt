@@ -8,14 +8,11 @@ import com.papsign.ktor.openapigen.route.response.respond
 import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.throws
 import community.flock.AppException
-import community.flock.common.DataBase
-import community.flock.common.Env.getProp
-import community.flock.common.LiveLogger
+import community.flock.common.LiveLayer.Companion.getLayer
 import community.flock.common.UuidParam
-import community.flock.common.define.Logger
 import community.flock.sith.data.Sith
 import community.flock.sith.define.Context
-import community.flock.sith.pipe.LiveRepository.Companion.liveRepository
+import community.flock.sith.pipe.LiveRepository
 import community.flock.sith.pipe.bindDelete
 import community.flock.sith.pipe.bindGet
 import community.flock.sith.pipe.bindPost
@@ -28,11 +25,9 @@ import kotlinx.coroutines.flow.toList
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
 
-    val host = getProp("ktor.db.host", "localhost")
-
     moduleWith(object : Context {
-        override val sithRepository = DataBase.instance(host).liveRepository()
-        override val logger: Logger = LiveLogger
+        override val sithRepository = LiveRepository(getLayer())
+        override val logger = getLayer().logger
     })
 
 }

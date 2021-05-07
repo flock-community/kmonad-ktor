@@ -1,17 +1,21 @@
 package community.flock.todo.pipe
 
 import community.flock.AppException
-import community.flock.common.DataBase
 import community.flock.common.define.DB
+import community.flock.common.define.HasDatabaseClient
+import community.flock.common.define.HasLogger
 import community.flock.todo.data.PersistedToDo
 import community.flock.todo.data.internalize
 import community.flock.todo.define.Repository
 import kotlinx.coroutines.flow.map
-import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.eq
 import java.util.UUID
 
-class LiveRepository private constructor(private val collection: CoroutineCollection<PersistedToDo>) : Repository {
+interface LiveRepositoryContext : HasDatabaseClient, HasLogger
+
+class LiveRepository(ctx: LiveRepositoryContext) : Repository {
+
+    private val collection = ctx.databaseClient.getDatabase(DB.ToDos.name).getCollection<PersistedToDo>()
 
     override suspend fun getAll() =
         guard { collection.find().toFlow() }.map { it.internalize() }
@@ -28,14 +32,6 @@ class LiveRepository private constructor(private val collection: CoroutineCollec
             .run { if (wasAcknowledged()) it else throw AppException.BadRequest() }
     }
 
-    companion object {
-        fun DataBase.liveRepository() = instance(client.getDatabase(DB.ToDos.name).getCollection("todo"))
-
-        @Volatile
-        private var INSTANCE: LiveRepository? = null
-        private fun instance(collection: CoroutineCollection<PersistedToDo>): LiveRepository =
-            INSTANCE ?: synchronized(this) { INSTANCE ?: LiveRepository(collection).also { INSTANCE = it } }
-    }
 }
 
 private suspend fun <R> guard(block: suspend () -> R) = try {

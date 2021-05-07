@@ -8,14 +8,13 @@ import com.papsign.ktor.openapigen.route.response.respond
 import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.throws
 import community.flock.AppException
-import community.flock.common.DataBase
-import community.flock.common.Env.getProp
+import community.flock.common.LiveLayer.Companion.getLayer
 import community.flock.common.UuidParam
 import community.flock.todo.data.ExposedToDo
 import community.flock.todo.data.PotentialToDo
 import community.flock.todo.data.consume
 import community.flock.todo.define.Context
-import community.flock.todo.pipe.LiveRepository.Companion.liveRepository
+import community.flock.todo.pipe.LiveRepository
 import community.flock.todo.pipe.bindDelete
 import community.flock.todo.pipe.bindGet
 import community.flock.todo.pipe.bindPost
@@ -33,10 +32,8 @@ typealias Ctx = PipelineContext<Unit, ApplicationCall>
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
 
-    val host = getProp("ktor.db.host", "localhost")
-
     moduleWith(object : Context {
-        override val toDoRepository = DataBase.instance(host).liveRepository()
+        override val toDoRepository = LiveRepository(getLayer())
     })
 
 }

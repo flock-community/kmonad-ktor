@@ -9,13 +9,11 @@ import com.papsign.ktor.openapigen.route.response.respond
 import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.throws
 import community.flock.AppException
-import community.flock.common.DataBase
-import community.flock.common.Env.getProp
-import community.flock.common.LiveLogger
+import community.flock.common.LiveLayer.Companion.getLayer
 import community.flock.common.UuidParam
 import community.flock.jedi.data.Jedi
 import community.flock.jedi.define.Context
-import community.flock.jedi.pipe.LiveRepository.Companion.liveRepository
+import community.flock.jedi.pipe.LiveRepository
 import community.flock.jedi.pipe.bindDelete
 import community.flock.jedi.pipe.bindGet
 import community.flock.jedi.pipe.bindPost
@@ -28,11 +26,9 @@ import kotlinx.coroutines.flow.toList
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
 
-    val host = getProp("ktor.db.host", "localhost")
-
     moduleWith(object : Context {
-        override val logger = LiveLogger
-        override val jediRepository = DataBase.instance(host).liveRepository()
+        override val jediRepository = LiveRepository(getLayer())
+        override val logger = getLayer().logger
     })
 
 }
