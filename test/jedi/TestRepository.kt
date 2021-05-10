@@ -1,7 +1,7 @@
 package jedi
 
 import arrow.core.Either
-import arrow.core.Right
+import arrow.core.Either.Right
 import community.flock.AppException
 import community.flock.jedi.data.Jedi
 import community.flock.jedi.define.Repository

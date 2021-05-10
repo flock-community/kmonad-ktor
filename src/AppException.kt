@@ -1,6 +1,6 @@
 package community.flock
 
-import arrow.core.Left
+import arrow.core.Either.Left
 import community.flock.common.Reader.Factory.ask
 import java.util.UUID
 

@@ -1,7 +1,7 @@
 package community.flock.jedi.pipe
 
-import arrow.core.Left
-import arrow.core.Right
+import arrow.core.Either.Left
+import arrow.core.Either.Right
 import arrow.core.flatMap
 import community.flock.AppException
 import community.flock.common.define.DB
@@ -21,7 +21,7 @@ class LiveRepository(ctx: LiveRepositoryContext) : Repository {
     override suspend fun getAll() = guard { collection.find().toFlow() }
 
     override suspend fun getByUUID(uuid: UUID) = guard { collection.findOne(Jedi::id eq uuid.toString()) }
-        .flatMap { it?.let(::Right) ?: Left(AppException.NotFound(uuid)) }
+        .flatMap { it?.let { Right(it) } ?: Left(AppException.NotFound(uuid)) }
 
     override suspend fun save(jedi: Jedi) = guard { collection.insertOne(jedi) }
         .flatMap { if (it.wasAcknowledged()) Right(jedi) else Left(AppException.BadRequest()) }

@@ -9,8 +9,8 @@ val swagger_generator_version: String by project
 
 plugins {
     application
-    kotlin("jvm") version "1.4.30"
-    kotlin("kapt") version "1.4.30"
+    kotlin("jvm") version "1.5.0"
+    kotlin("kapt") version "1.5.0"
 }
 
 group = "community.flock"
@@ -21,15 +21,15 @@ application {
 }
 
 repositories {
+    mavenCentral()
     mavenLocal()
     jcenter()
-    maven { url = uri("https://kotlin.bintray.com/ktor") }
-    maven { url = uri("https://dl.bintray.com/arrow-kt/arrow-kt/") }
     maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-client-core:$ktor_version")
