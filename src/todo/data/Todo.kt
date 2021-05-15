@@ -1,7 +1,7 @@
 package community.flock.todo.data
 
-import community.flock.common.Exposable
-import community.flock.common.Externalizable
+import community.flock.common.define.Exposable
+import community.flock.common.define.Externalizable
 import java.time.LocalDateTime
 import java.util.UUID
 

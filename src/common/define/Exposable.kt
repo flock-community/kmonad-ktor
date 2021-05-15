@@ -1,7 +1,5 @@
-package community.flock.common
+package community.flock.common.define
 
 interface Exposable<T> {
-
     fun expose(): T
-
 }

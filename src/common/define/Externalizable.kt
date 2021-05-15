@@ -1,4 +1,4 @@
-package community.flock.common
+package community.flock.common.define
 
 interface Externalizable<T> {
     fun externalize(): T

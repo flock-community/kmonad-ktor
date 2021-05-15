@@ -1,5 +1,6 @@
 package community.flock.wielders.pipe
 
+import arrow.core.extensions.either.monad.map
 import arrow.core.getOrHandle
 import community.flock.AppException
 import community.flock.wielders.data.ForceWielder
