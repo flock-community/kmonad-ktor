@@ -12,27 +12,27 @@ data class Todo(
     val completed: Boolean,
     val createdAt: LocalDateTime,
     val dueDate: LocalDateTime?
-) : Exposable<ExposedToDo>, Externalizable<PersistedToDo> {
+) : Exposable<ExposedTodo>, Externalizable<PersistedTodo> {
 
-    constructor(toDo: PotentialToDo) : this(
-        id = UUID.fromString(toDo.id),
-        title = toDo.title,
-        description = toDo.description,
-        completed = toDo.completed,
-        createdAt = LocalDateTime.parse(toDo.createdAt),
-        dueDate = LocalDateTime.parse(toDo.dueDate)
+    constructor(todo: PotentialTodo) : this(
+        id = UUID.fromString(todo.id),
+        title = todo.title,
+        description = todo.description,
+        completed = todo.completed,
+        createdAt = LocalDateTime.parse(todo.createdAt),
+        dueDate = LocalDateTime.parse(todo.dueDate)
     )
 
-    constructor(toDo: PersistedToDo) : this(
-        UUID.fromString(toDo.id),
-        toDo.title,
-        toDo.description,
-        toDo.completed,
-        LocalDateTime.parse(toDo.createdAt),
-        toDo.dueDate?.let { LocalDateTime.parse(it) }
+    constructor(todo: PersistedTodo) : this(
+        UUID.fromString(todo.id),
+        todo.title,
+        todo.description,
+        todo.completed,
+        LocalDateTime.parse(todo.createdAt),
+        todo.dueDate?.let { LocalDateTime.parse(it) }
     )
 
-    override fun expose() = ExposedToDo(
+    override fun expose() = ExposedTodo(
         id.toString(),
         title,
         description,
@@ -41,7 +41,7 @@ data class Todo(
         dueDate?.toString()
     )
 
-    override fun externalize() = PersistedToDo(
+    override fun externalize() = PersistedTodo(
         id.toString(),
         title,
         description,
@@ -51,7 +51,7 @@ data class Todo(
     )
 }
 
-data class PotentialToDo(
+data class PotentialTodo(
     val id: String,
     val title: String,
     val description: String,
@@ -60,7 +60,7 @@ data class PotentialToDo(
     val dueDate: String?
 )
 
-data class ExposedToDo(
+data class ExposedTodo(
     val id: String,
     val title: String,
     val description: String,
@@ -69,7 +69,7 @@ data class ExposedToDo(
     val dueDate: String?
 )
 
-data class PersistedToDo(
+data class PersistedTodo(
     val id: String,
     val title: String,
     val description: String,
@@ -78,5 +78,5 @@ data class PersistedToDo(
     val dueDate: String?
 )
 
-fun PotentialToDo.consume() = Todo(this)
-fun PersistedToDo.internalize() = Todo(this)
+fun PotentialTodo.consume() = Todo(this)
+fun PersistedTodo.internalize() = Todo(this)

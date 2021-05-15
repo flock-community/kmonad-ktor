@@ -33,8 +33,9 @@ class LiveRepository(ctx: LiveRepositoryContext) : Repository {
     }
 
     override suspend fun save(jedi: Jedi) = either<AppException, Jedi> {
-        val existingJedi = getByUUID(UUID.fromString(jedi.id))
-        if (existingJedi.isRight()) !Conflict(jedi.id).left() else {
+        val uuid = UUID.fromString(jedi.id)
+        val existingJedi = getByUUID(uuid)
+        if (existingJedi.isRight()) !Conflict(uuid).left() else {
             val result = !guard { collection.insertOne(jedi) }
             val maybeJedi = jedi.takeIf { result.wasAcknowledged() }
             !guard { maybeJedi!! }

@@ -1,3 +1,3 @@
 package community.flock.common.define
 
-enum class DB { StarWars, ToDos }
+enum class DB { StarWars, Todos }

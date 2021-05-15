@@ -55,16 +55,18 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 tasks.withType<Jar> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     // Otherwise you'll get a "No main manifest attribute" error
-    manifest {
-        attributes["Main-Class"] = "community.flock.ApplicationKt"
-    }
+    manifest { attributes["Main-Class"] = "community.flock.ApplicationKt" }
 
     // To add all of the dependencies otherwise a "NoClassDefFoundError" error
     from(sourceSets.main.get().output)
 
     dependsOn(configurations.runtimeClasspath)
     from({
-        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+        configurations.runtimeClasspath.get()
+            .filter { it.name.endsWith("jar") }
+            .map { zipTree(it) }
     })
 }

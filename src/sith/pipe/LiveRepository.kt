@@ -26,7 +26,8 @@ class LiveRepository(ctx: LiveRepositoryContext) : Repository {
         ?: throw NotFound(uuid)
 
     override suspend fun save(sith: Sith): Sith {
-        val exception = runCatching { getByUUID(UUID.fromString(sith.id)) }.exceptionOrNull() ?: throw Conflict(sith.id)
+        val uuid = UUID.fromString(sith.id)
+        val exception = runCatching { getByUUID(uuid) }.exceptionOrNull() ?: throw Conflict(uuid)
         val result = if (exception is NotFound) guard { collection.insertOne(sith) } else throw exception
         return if (result.wasAcknowledged()) sith else throw InternalServerError()
     }
@@ -42,7 +43,7 @@ class LiveRepository(ctx: LiveRepositoryContext) : Repository {
 private suspend fun <R> guard(block: suspend () -> R) = try {
     block()
 } catch (e: DuplicateKeyException) {
-    throw Conflict(e.message ?: "", e.cause)
+    throw Conflict(null, e.cause)
 } catch (e: MongoException) {
     throw InternalServerError(e.cause)
 } catch (e: Exception) {

@@ -1,10 +1,13 @@
 package community.flock.todo.pipe
 
-import community.flock.AppException
+import community.flock.AppException.Conflict
+import community.flock.AppException.InternalServerError
+import community.flock.AppException.NotFound
 import community.flock.common.define.DB
 import community.flock.common.define.HasDatabaseClient
 import community.flock.common.define.HasLogger
-import community.flock.todo.data.PersistedToDo
+import community.flock.todo.data.PersistedTodo
+import community.flock.todo.data.Todo
 import community.flock.todo.data.internalize
 import community.flock.todo.define.Repository
 import kotlinx.coroutines.flow.map
@@ -15,21 +18,25 @@ interface LiveRepositoryContext : HasDatabaseClient, HasLogger
 
 class LiveRepository(ctx: LiveRepositoryContext) : Repository {
 
-    private val collection = ctx.databaseClient.getDatabase(DB.ToDos.name).getCollection<PersistedToDo>()
+    private val collection = ctx.databaseClient.getDatabase(DB.Todos.name).getCollection<PersistedTodo>("todo")
 
-    override suspend fun getAll() =
-        guard { collection.find().toFlow() }.map { it.internalize() }
+    override suspend fun getAll() = guard { collection.find().toFlow() }
+        .map { it.internalize() }
 
-    override suspend fun getByUUID(uuid: UUID) = guard {
-        collection.findOne(PersistedToDo::id eq uuid.toString())?.internalize()
-    } ?: throw AppException.NotFound(uuid)
+    override suspend fun getByUUID(uuid: UUID) = guard { collection.findOne(PersistedTodo::id eq uuid.toString()) }
+        ?.internalize()
+        ?: throw NotFound(uuid)
 
-    override suspend fun save(todo: community.flock.todo.data.Todo) = guard { collection.insertOne(todo.externalize()) }
-        .run { if (wasAcknowledged()) todo else throw AppException.BadRequest() }
+    override suspend fun save(todo: Todo): Todo {
+        val exception = runCatching { getByUUID(todo.id) }.exceptionOrNull() ?: throw Conflict(todo.id)
+        val result = if (exception is NotFound) guard { collection.insertOne(todo.externalize()) } else throw exception
+        return if (result.wasAcknowledged()) todo else throw InternalServerError()
+    }
 
-    override suspend fun deleteByUUID(uuid: UUID) = getByUUID(uuid).let {
-        guard { collection.deleteOne(PersistedToDo::id eq uuid.toString()) }
-            .run { if (wasAcknowledged()) it else throw AppException.BadRequest() }
+    override suspend fun deleteByUUID(uuid: UUID): Todo {
+        val todo = getByUUID(uuid)
+        val result = guard { collection.deleteOne(PersistedTodo::id eq uuid.toString()) }
+        return if (result.wasAcknowledged()) todo else throw InternalServerError()
     }
 
 }
@@ -37,5 +44,5 @@ class LiveRepository(ctx: LiveRepositoryContext) : Repository {
 private suspend fun <R> guard(block: suspend () -> R) = try {
     block()
 } catch (e: Exception) {
-    throw AppException.InternalServerError(e.cause)
+    throw InternalServerError(e.cause)
 }

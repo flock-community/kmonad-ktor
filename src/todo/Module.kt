@@ -10,8 +10,8 @@ import com.papsign.ktor.openapigen.route.throws
 import community.flock.AppException
 import community.flock.common.LiveLayer.Companion.getLayer
 import community.flock.common.UuidParam
-import community.flock.todo.data.ExposedToDo
-import community.flock.todo.data.PotentialToDo
+import community.flock.todo.data.ExposedTodo
+import community.flock.todo.data.PotentialTodo
 import community.flock.todo.data.consume
 import community.flock.todo.define.Context
 import community.flock.todo.pipe.LiveRepository
@@ -46,19 +46,19 @@ fun Application.moduleWith(context: Context) {
             .throws(BadRequest, AppException.BadRequest::class)
             .throws(NotFound, AppException.NotFound::class)
             .throws(Conflict, AppException.Conflict::class) {
-                get<Unit, List<ExposedToDo>> {
+                get<Unit, List<ExposedTodo>> {
                     respond(context.bindGet().map { it.expose() }.toList())
                 }
 
-                get<UuidParam, ExposedToDo> { params ->
+                get<UuidParam, ExposedTodo> { params ->
                     respond(context.bindGet(params.uuid).expose())
                 }
 
-                post<Unit, ExposedToDo, PotentialToDo> { _, body ->
+                post<Unit, ExposedTodo, PotentialTodo> { _, body ->
                     respond(context.bindPost(body.consume()).expose())
                 }
 
-                delete<UuidParam, ExposedToDo> { params ->
+                delete<UuidParam, ExposedTodo> { params ->
                     respond(context.bindDelete(params.uuid).expose())
                 }
             }

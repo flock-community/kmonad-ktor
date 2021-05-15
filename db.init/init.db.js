@@ -16,7 +16,7 @@ starWars.sith.insertMany([
     {id: "dda88970-6730-400a-861c-08f992970f80", name: "Anakin", age: 29},
 ]);
 
-toDos = client.getDB("ToDos");
+toDos = client.getDB("Todos");
 
 toDos.createCollection("todo", {capped: false})
 
