@@ -1,6 +1,6 @@
 package jedi
 
-import common.TestLogger
+import common.TestLayer
 import community.flock.jedi.define.Context
 import community.flock.jedi.moduleWith
 import community.flock.main
@@ -43,8 +43,8 @@ class ModuleTest {
         withTestApplication({
             main()
             moduleWith(object : Context {
-                override val logger = TestLogger
-                override val jediRepository = TestRepository
+                override val jediRepository = TestLayer.jediRepository
+                override val logger = TestLayer.logger
             })
         }) { block() }
     }

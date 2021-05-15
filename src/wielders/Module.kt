@@ -12,7 +12,10 @@ import community.flock.wielders.data.ForceWielder
 import community.flock.wielders.define.Context
 import community.flock.wielders.pipe.bindGet
 import io.ktor.application.Application
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.HttpStatusCode.Companion.BadRequest
+import io.ktor.http.HttpStatusCode.Companion.Conflict
+import io.ktor.http.HttpStatusCode.Companion.InternalServerError
+import io.ktor.http.HttpStatusCode.Companion.NotFound
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import community.flock.jedi.pipe.LiveRepository as LiveJediRepository
@@ -34,9 +37,10 @@ fun Application.module() {
 fun Application.moduleWith(context: Context) {
     apiRouting {
         route("/force-wielders")
-            .throws(HttpStatusCode.InternalServerError, AppException.InternalServerError::class)
-            .throws(HttpStatusCode.BadRequest, AppException.BadRequest::class)
-            .throws(HttpStatusCode.NotFound, AppException.NotFound::class) {
+            .throws(InternalServerError, AppException.InternalServerError::class)
+            .throws(BadRequest, AppException.BadRequest::class)
+            .throws(NotFound, AppException.NotFound::class)
+            .throws(Conflict, AppException.Conflict::class) {
                 get<Unit, List<ForceWielder>> {
                     respond(context.bindGet().toList())
                 }

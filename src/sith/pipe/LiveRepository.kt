@@ -1,6 +1,10 @@
 package community.flock.sith.pipe
 
-import community.flock.AppException
+import com.mongodb.DuplicateKeyException
+import com.mongodb.MongoException
+import community.flock.AppException.Conflict
+import community.flock.AppException.InternalServerError
+import community.flock.AppException.NotFound
 import community.flock.common.define.DB
 import community.flock.common.define.HasDatabaseClient
 import community.flock.common.define.HasLogger
@@ -18,21 +22,29 @@ class LiveRepository(ctx: LiveRepositoryContext) : Repository {
 
     override suspend fun getAll() = guard { collection.find().toFlow() }
 
-    override suspend fun getByUUID(uuid: UUID): Sith =
-        guard { collection.findOne(Sith::id eq uuid.toString()) } ?: throw AppException.NotFound(uuid)
+    override suspend fun getByUUID(uuid: UUID): Sith = guard { collection.findOne(Sith::id eq uuid.toString()) }
+        ?: throw NotFound(uuid)
 
-    override suspend fun save(sith: Sith) = guard { collection.insertOne(sith) }
-        .run { if (wasAcknowledged()) sith else throw AppException.BadRequest() }
+    override suspend fun save(sith: Sith): Sith {
+        val exception = runCatching { getByUUID(UUID.fromString(sith.id)) }.exceptionOrNull() ?: throw Conflict(sith.id)
+        val result = if (exception is NotFound) guard { collection.insertOne(sith) } else throw exception
+        return if (result.wasAcknowledged()) sith else throw InternalServerError()
+    }
 
-    override suspend fun deleteByUUID(uuid: UUID) = getByUUID(uuid).let {
-        guard { collection.deleteOne(Sith::id eq uuid.toString()) }
-            .run { if (wasAcknowledged()) it else throw AppException.BadRequest() }
+    override suspend fun deleteByUUID(uuid: UUID): Sith {
+        val sith = getByUUID(uuid)
+        val result = guard { collection.deleteOne(Sith::id eq uuid.toString()) }
+        return if (result.wasAcknowledged()) sith else throw InternalServerError()
     }
 
 }
 
 private suspend fun <R> guard(block: suspend () -> R) = try {
     block()
+} catch (e: DuplicateKeyException) {
+    throw Conflict(e.message ?: "", e.cause)
+} catch (e: MongoException) {
+    throw InternalServerError(e.cause)
 } catch (e: Exception) {
-    throw AppException.InternalServerError(e.cause)
+    throw InternalServerError(e.cause)
 }

@@ -3,9 +3,7 @@ package community.flock.common
 import community.flock.common.define.Logger
 
 object LiveLogger : Logger {
-    override fun log(s: String) {
-        println(s)
-    }
+    override fun log(s: String) = println(s)
 
     override fun error() {
         TODO("Not yet implemented")

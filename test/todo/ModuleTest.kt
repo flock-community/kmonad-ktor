@@ -1,9 +1,9 @@
-package sith
+package todo
 
 import common.TestLayer
 import community.flock.main
-import community.flock.sith.define.Context
-import community.flock.sith.moduleWith
+import community.flock.todo.define.Context
+import community.flock.todo.moduleWith
 import io.ktor.http.HttpMethod
 import io.ktor.server.testing.TestApplicationCall
 import io.ktor.server.testing.TestApplicationEngine
@@ -18,18 +18,18 @@ import kotlin.test.assertTrue
 class ModuleTest {
 
     @Test
-    fun testAllSith() = setup {
-        handleRequest(HttpMethod.Get, "/sith").apply {
-            response.contains("Kasper")
-            response.contains("Willem")
+    fun testAllTodos() = setup {
+        handleRequest(HttpMethod.Get, "/todo").apply {
+            response.contains("ead3f222-1c30-49e4-bfda-5000c582b1d6")
+            response.contains("5b11084b-ac6c-454f-9f4e-2be7c38a202b")
         }
     }
 
     @Test
-    fun testSithByUUID() = setup {
-        handleRequest(HttpMethod.Get, "/sith/${UUID.randomUUID()}").apply {
-            response.contains("Kasper")
-            response.doesNotContain("Willem")
+    fun testTodoByUUID() = setup {
+        handleRequest(HttpMethod.Get, "/todo/${UUID.randomUUID()}").apply {
+            response.contains("ead3f222-1c30-49e4-bfda-5000c582b1d6")
+            response.doesNotContain("5b11084b-ac6c-454f-9f4e-2be7c38a202b")
         }
     }
 
@@ -37,8 +37,7 @@ class ModuleTest {
         withTestApplication({
             main()
             moduleWith(object : Context {
-                override val sithRepository = TestLayer.sithRepository
-                override val logger = TestLayer.logger
+                override val toDoRepository = TestLayer.todoRepository
             })
         }) { block() }
     }

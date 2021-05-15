@@ -18,6 +18,7 @@ import community.flock.sith.pipe.bindGet
 import community.flock.sith.pipe.bindPost
 import io.ktor.application.Application
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
+import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import kotlinx.coroutines.flow.toList
@@ -37,7 +38,8 @@ fun Application.moduleWith(context: Context) {
         route("/sith")
             .throws(InternalServerError, AppException.InternalServerError::class)
             .throws(BadRequest, AppException.BadRequest::class)
-            .throws(NotFound, AppException.NotFound::class) {
+            .throws(NotFound, AppException.NotFound::class)
+            .throws(Conflict, AppException.Conflict::class) {
                 get<Unit, List<Sith>> {
                     respond(context.bindGet().toList())
                 }

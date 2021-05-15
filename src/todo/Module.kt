@@ -21,6 +21,7 @@ import community.flock.todo.pipe.bindPost
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
+import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.util.pipeline.PipelineContext
@@ -43,7 +44,8 @@ fun Application.moduleWith(context: Context) {
         route("/todo")
             .throws(InternalServerError, AppException.InternalServerError::class)
             .throws(BadRequest, AppException.BadRequest::class)
-            .throws(NotFound, AppException.NotFound::class) {
+            .throws(NotFound, AppException.NotFound::class)
+            .throws(Conflict, AppException.Conflict::class) {
                 get<Unit, List<ExposedToDo>> {
                     respond(context.bindGet().map { it.expose() }.toList())
                 }

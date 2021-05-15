@@ -19,6 +19,7 @@ import community.flock.jedi.pipe.bindGet
 import community.flock.jedi.pipe.bindPost
 import io.ktor.application.Application
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
+import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import kotlinx.coroutines.flow.toList
@@ -38,7 +39,8 @@ fun Application.moduleWith(context: Context) {
         route("/jedi")
             .throws(InternalServerError, AppException.InternalServerError::class)
             .throws(BadRequest, AppException.BadRequest::class)
-            .throws(NotFound, AppException.NotFound::class) {
+            .throws(NotFound, AppException.NotFound::class)
+            .throws(Conflict, AppException.Conflict::class) {
                 get<Unit, List<Jedi>> {
                     bindGet()
                         .run(context)
