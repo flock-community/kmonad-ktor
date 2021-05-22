@@ -4,6 +4,8 @@ import community.flock.common.define.Exposable
 import community.flock.common.define.Externalizable
 import java.time.LocalDateTime
 import java.util.UUID
+import community.flock.todo.Todo as ExposedTodo
+import community.flock.todo.Todo as PotentialTodo
 
 data class Todo(
     val id: UUID = UUID.randomUUID(),
@@ -50,24 +52,6 @@ data class Todo(
         dueDate?.toString()
     )
 }
-
-data class PotentialTodo(
-    val id: String,
-    val title: String,
-    val description: String,
-    val completed: Boolean,
-    val createdAt: String,
-    val dueDate: String?
-)
-
-data class ExposedTodo(
-    val id: String,
-    val title: String,
-    val description: String,
-    val completed: Boolean,
-    val createdAt: String,
-    val dueDate: String?
-)
 
 data class PersistedTodo(
     val id: String,

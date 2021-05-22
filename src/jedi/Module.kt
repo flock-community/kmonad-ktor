@@ -1,6 +1,8 @@
 package community.flock.jedi
 
 import arrow.core.getOrHandle
+import com.papsign.ktor.openapigen.annotations.Path
+import com.papsign.ktor.openapigen.annotations.parameters.PathParam
 import com.papsign.ktor.openapigen.route.apiRouting
 import com.papsign.ktor.openapigen.route.path.normal.delete
 import com.papsign.ktor.openapigen.route.path.normal.get
@@ -10,7 +12,6 @@ import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.throws
 import community.flock.AppException
 import community.flock.common.LiveLayer.Companion.getLayer
-import community.flock.common.UuidParam
 import community.flock.jedi.data.Jedi
 import community.flock.jedi.define.Context
 import community.flock.jedi.pipe.LiveRepository
@@ -72,3 +73,6 @@ fun Application.moduleWith(context: Context) {
             }
     }
 }
+
+@Path("/{uuid}")
+data class UuidParam(@PathParam("UUID") val uuid: String)

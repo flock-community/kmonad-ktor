@@ -1,5 +1,7 @@
 package community.flock.wielders
 
+import com.papsign.ktor.openapigen.annotations.Path
+import com.papsign.ktor.openapigen.annotations.parameters.PathParam
 import com.papsign.ktor.openapigen.route.apiRouting
 import com.papsign.ktor.openapigen.route.path.normal.get
 import com.papsign.ktor.openapigen.route.response.respond
@@ -7,7 +9,6 @@ import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.throws
 import community.flock.AppException
 import community.flock.common.LiveLayer.Companion.getLayer
-import community.flock.common.UuidParam
 import community.flock.wielders.data.ForceWielder
 import community.flock.wielders.define.Context
 import community.flock.wielders.pipe.bindGet
@@ -51,3 +52,6 @@ fun Application.moduleWith(context: Context) {
             }
     }
 }
+
+@Path("/{uuid}")
+data class UuidParam(@PathParam("UUID") val uuid: String)
