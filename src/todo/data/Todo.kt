@@ -1,5 +1,6 @@
 package community.flock.todo.data
 
+import community.flock.common.define.Data
 import community.flock.common.define.Exposable
 import community.flock.common.define.Externalizable
 import java.time.LocalDateTime
@@ -8,16 +9,16 @@ import community.flock.todo.Todo as ExposedTodo
 import community.flock.todo.Todo as PotentialTodo
 
 data class Todo(
-    val id: UUID = UUID.randomUUID(),
+    override val id: String = UUID.randomUUID().toString(),
     val title: String,
     val description: String,
     val completed: Boolean,
     val createdAt: LocalDateTime,
     val dueDate: LocalDateTime?
-) : Exposable<ExposedTodo>, Externalizable<PersistedTodo> {
+) : Data, Exposable<ExposedTodo>, Externalizable<PersistedTodo> {
 
     constructor(todo: PotentialTodo) : this(
-        id = UUID.fromString(todo.id),
+        id = todo.id,
         title = todo.title,
         description = todo.description,
         completed = todo.completed,
@@ -26,7 +27,7 @@ data class Todo(
     )
 
     constructor(todo: PersistedTodo) : this(
-        UUID.fromString(todo.id),
+        todo.id,
         todo.title,
         todo.description,
         todo.completed,
@@ -35,7 +36,7 @@ data class Todo(
     )
 
     override fun expose() = ExposedTodo(
-        id.toString(),
+        id,
         title,
         description,
         completed,
@@ -44,7 +45,7 @@ data class Todo(
     )
 
     override fun externalize() = PersistedTodo(
-        id.toString(),
+        id,
         title,
         description,
         completed,

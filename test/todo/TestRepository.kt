@@ -10,7 +10,7 @@ import java.util.UUID
 object TestRepository : Repository {
     override suspend fun getAll() = flowOf(
         Todo(
-            id = UUID.fromString("ead3f222-1c30-49e4-bfda-5000c582b1d6"),
+            id = "ead3f222-1c30-49e4-bfda-5000c582b1d6",
             title = "toDo.title",
             description = "toDo.description",
             completed = false,
@@ -18,7 +18,7 @@ object TestRepository : Repository {
             dueDate = LocalDateTime.now().plusDays(1L)
         ),
         Todo(
-            id = UUID.fromString("5b11084b-ac6c-454f-9f4e-2be7c38a202b"),
+            id = "5b11084b-ac6c-454f-9f4e-2be7c38a202b",
             title = "2nd.toDo.title",
             description = "2nd.toDo.description",
             completed = true,

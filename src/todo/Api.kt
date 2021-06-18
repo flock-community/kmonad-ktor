@@ -10,6 +10,7 @@ import com.papsign.ktor.openapigen.route.response.respond
 import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.throws
 import community.flock.AppException
+import community.flock.common.define.Data
 import io.ktor.application.Application
 import io.ktor.http.HttpStatusCode
 
@@ -39,10 +40,10 @@ fun Application.todoApi(routes: Routes) {
 data class UuidParam(@PathParam("UUID") val uuid: String)
 
 data class Todo(
-    val id: String,
+    override val id: String,
     val title: String,
     val description: String,
     val completed: Boolean,
     val createdAt: String,
     val dueDate: String?
-)
+) : Data

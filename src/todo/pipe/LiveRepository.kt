@@ -28,7 +28,8 @@ class LiveRepository(ctx: LiveRepositoryContext) : Repository {
         ?: throw NotFound(uuid)
 
     override suspend fun save(todo: Todo): Todo {
-        val exception = runCatching { getByUUID(todo.id) }.exceptionOrNull() ?: throw Conflict(todo.id)
+        val uuid = UUID.fromString(todo.id)
+        val exception = runCatching { getByUUID(uuid) }.exceptionOrNull() ?: throw Conflict(uuid)
         val result = if (exception is NotFound) guard { collection.insertOne(todo.externalize()) } else throw exception
         return if (result.wasAcknowledged()) todo else throw InternalServerError()
     }

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.flowOf
 import java.util.UUID
 
 object TestRepository : Repository {
-    override suspend fun getAll() = Right(flowOf(Jedi("Luke", 20), Jedi("Yoda", 942)))
+    override suspend fun getAll() = Right(flowOf(Jedi(name = "Luke", age = 20), Jedi(name = "Yoda", age = 942)))
 
     override suspend fun getByUUID(uuid: UUID) = getAll().map { it.first() }
 
