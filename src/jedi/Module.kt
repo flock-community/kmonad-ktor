@@ -44,7 +44,8 @@ fun Application.moduleWith(context: Context) {
             .throws(Conflict, AppException.Conflict::class) {
                 get<Unit, List<Jedi>> {
                     bindGet()
-                        .run(context)
+                        .provide(context)
+                        .runUnsafe()
                         .getOrHandle { throw it }
                         .toList()
                         .let { respond(it) }
@@ -52,21 +53,24 @@ fun Application.moduleWith(context: Context) {
 
                 get<UuidParam, Jedi> { params ->
                     bindGet(params.uuid)
-                        .run(context)
+                        .provide(context)
+                        .runUnsafe()
                         .getOrHandle { throw it }
                         .let { respond(it) }
                 }
 
                 post<Unit, Jedi, Jedi> { _, body ->
                     bindPost(body)
-                        .run(context)
+                        .provide(context)
+                        .runUnsafe()
                         .getOrHandle { throw it }
                         .let { respond(it) }
                 }
 
                 delete<UuidParam, Jedi> { params ->
                     bindDelete(params.uuid)
-                        .run(context)
+                        .provide(context)
+                        .runUnsafe()
                         .getOrHandle { throw it }
                         .let { respond(it) }
                 }

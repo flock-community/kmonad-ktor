@@ -9,14 +9,14 @@ import community.flock.toReader
 import java.util.UUID
 
 
-suspend fun bindGet() = getAll<Context>()
+fun bindGet() = getAll<Context>()
 
-suspend fun bindGet(uuidString: String?) = validate { UUID.fromString(uuidString) }
+fun bindGet(uuidString: String?) = validate { UUID.fromString(uuidString) }
     .fold({ it.toReader() }, { getByUUID<Context>(it) })
 
-suspend fun bindPost(jedi: Jedi) = save<Context>(jedi)
+fun bindPost(jedi: Jedi) = save<Context>(jedi)
 
-suspend fun bindDelete(uuidString: String?) = validate { UUID.fromString(uuidString) }
+fun bindDelete(uuidString: String?) = validate { UUID.fromString(uuidString) }
     .fold({ it.toReader() }, { deleteByUUID<Context>(it) })
 
 

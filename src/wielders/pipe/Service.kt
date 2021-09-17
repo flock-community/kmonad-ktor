@@ -1,6 +1,5 @@
 package community.flock.wielders.pipe
 
-import arrow.core.extensions.either.monad.map
 import arrow.core.getOrHandle
 import community.flock.AppException
 import community.flock.wielders.data.ForceWielder
@@ -19,13 +18,15 @@ import community.flock.sith.pipe.getByUUID as getSithByUUID
 
 @ExperimentalCoroutinesApi
 suspend fun <D> D.getAll() where D : JediContext, D : SithContext = getAllJedi<JediContext>()
-    .run(this)
+    .provide(this)
+    .runUnsafe()
     .getOrHandle { throw it }
     .map { it.toForceWielder() } + getAllSith()
     .map { it.toForceWielder() }
 
 suspend fun <D> D.getByUUID(uuid: UUID) where D : JediContext, D : SithContext = (getJediByUUID<JediContext>(uuid)
-    .run(this)
+    .provide(this)
+    .runUnsafe()
     .map { it.toForceWielder() }
     .orNull() to runCatching { getSithByUUID(uuid) }
     .map { it.toForceWielder() }
