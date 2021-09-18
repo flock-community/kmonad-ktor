@@ -8,9 +8,9 @@ import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.junit.Assert.assertEquals
+import org.junit.Test
 import java.io.File
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import community.flock.jedi.define.Context as JediContext
 import community.flock.jedi.moduleWith as jediModuleWith
 import community.flock.sith.define.Context as SithContext

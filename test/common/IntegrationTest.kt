@@ -17,12 +17,12 @@ import io.ktor.server.testing.TestApplicationResponse
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
 import java.time.LocalDateTime
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 import community.flock.jedi.define.Context as JediContext
 import community.flock.jedi.moduleWith as jediModuleWith
 import community.flock.jedi.pipe.LiveRepository as LiveJediRepository
@@ -149,7 +149,7 @@ class IntegrationTest {
 
     private fun Any.toJson() = jacksonObjectMapper().writeValueAsString(this)
 
-    private fun TestApplicationResponse.contains(s: String) = assertTrue(content?.contains(s) ?: false, content)
-    private fun TestApplicationResponse.doesNotContain(s: String) = assertFalse(content?.contains(s) ?: true, content)
+    private fun TestApplicationResponse.contains(s: String) = assertTrue(content?.contains(s) ?: false)
+    private fun TestApplicationResponse.doesNotContain(s: String) = assertFalse(content?.contains(s) ?: true)
 
 }

@@ -38,7 +38,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core:$ktor_version")
     implementation("io.ktor:ktor-jackson:$ktor_version")
     implementation("org.litote.kmongo:kmongo-coroutine:$kmongo_version")
-    implementation("io.arrow-kt:arrow-mtl:$arrow_version")
+    implementation("io.arrow-kt:arrow-core:$arrow_version")
     implementation("com.github.papsign:Ktor-OpenAPI-Generator:$swagger_generator_version")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     kapt("io.arrow-kt:arrow-meta:$arrow_version")

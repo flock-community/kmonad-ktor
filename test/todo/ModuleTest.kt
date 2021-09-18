@@ -10,10 +10,10 @@ import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.TestApplicationResponse
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Test
 import java.util.UUID
-import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class ModuleTest {
 
@@ -42,7 +42,7 @@ class ModuleTest {
         }) { block() }
     }
 
-    private fun TestApplicationResponse.contains(s: String) = assertTrue(content?.contains(s) ?: false, content)
-    private fun TestApplicationResponse.doesNotContain(s: String) = assertFalse(content?.contains(s) ?: true, content)
+    private fun TestApplicationResponse.contains(s: String) = assertTrue(content?.contains(s) ?: false)
+    private fun TestApplicationResponse.doesNotContain(s: String) = assertFalse(content?.contains(s) ?: true)
 
 }

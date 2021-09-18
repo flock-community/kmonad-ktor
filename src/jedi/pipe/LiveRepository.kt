@@ -20,6 +20,7 @@ import java.util.UUID
 
 interface LiveRepositoryContext : HasDatabaseClient, HasLogger
 
+@Suppress("IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION")
 class LiveRepository(ctx: LiveRepositoryContext) : Repository {
 
     private val collection = ctx.databaseClient.getDatabase(DB.StarWars.name).getCollection<Jedi>()
@@ -35,8 +36,8 @@ class LiveRepository(ctx: LiveRepositoryContext) : Repository {
     }
 
     private suspend fun getByUUIDAsEither(uuid: UUID): Either<AppException, Jedi> = either {
-        val maybeJedi = !guard { collection.findOne(Jedi::id eq uuid.toString()) }
-        maybeJedi ?: !NotFound(uuid).left()
+        val maybeJedi = guard { collection.findOne(Jedi::id eq uuid.toString()) }.bind()
+        maybeJedi ?: NotFound(uuid).left().bind()
     }
 
     override fun save(jedi: Jedi): IO<Either<AppException, Jedi>> = IO {
@@ -46,10 +47,10 @@ class LiveRepository(ctx: LiveRepositoryContext) : Repository {
     private suspend fun saveAsEither(jedi: Jedi): Either<AppException, Jedi> = either {
         val uuid = UUID.fromString(jedi.id)
         val existingJedi = getByUUIDAsEither(uuid)
-        if (existingJedi.isRight()) !Conflict(uuid).left() else {
-            val result = !guard { collection.insertOne(jedi) }
+        if (existingJedi.isRight()) Conflict(uuid).left().bind() else {
+            val result = guard { collection.insertOne(jedi) }.bind()
             val maybeJedi = jedi.takeIf { result.wasAcknowledged() }
-            maybeJedi ?: !InternalServerError().left()
+            maybeJedi ?: InternalServerError().left().bind()
         }
     }
 
@@ -58,10 +59,10 @@ class LiveRepository(ctx: LiveRepositoryContext) : Repository {
     }
 
     private suspend fun deleteByUUIDAsEither(uuid: UUID): Either<AppException, Jedi> = either {
-        val jedi = !getByUUIDAsEither(uuid)
-        val result = !guard { collection.deleteOne(Jedi::id eq uuid.toString()) }
+        val jedi = getByUUIDAsEither(uuid).bind()
+        val result = guard { collection.deleteOne(Jedi::id eq uuid.toString()) }.bind()
         val maybeJedi = jedi.takeIf { result.wasAcknowledged() }
-        maybeJedi ?: !InternalServerError().left()
+        maybeJedi ?: InternalServerError().left().bind()
     }
 
 }
