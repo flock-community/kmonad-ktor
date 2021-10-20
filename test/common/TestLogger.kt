@@ -1,17 +1,14 @@
 package common
 
-import community.flock.common.define.Logger
+import community.flock.kmonad.core.common.define.Logger
+import org.junit.Assert
 
 object TestLogger : Logger {
-    override fun log(s: String) {
-        println(s)
-    }
 
-    override fun error() {
-        TODO("Not yet implemented")
-    }
+    override fun error(string: String) = Assert.assertTrue(string.isNotBlank())
 
-    override fun warn() {
-        TODO("Not yet implemented")
-    }
+    override fun log(string: String) = Assert.assertTrue(string.isNotBlank())
+
+    override fun warn(string: String) = Assert.assertTrue(string.isNotBlank())
+
 }

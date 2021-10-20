@@ -1,11 +1,11 @@
 package community.flock.todo.data
 
-import community.flock.common.define.Data
-import community.flock.common.define.Exposable
-import community.flock.common.define.Externalizable
+import community.flock.common.ProducedAs
+import community.flock.common.ExternalizedAs
+import community.flock.kmonad.core.common.define.Data
 import java.time.LocalDateTime
 import java.util.UUID
-import community.flock.todo.Todo as ExposedTodo
+import community.flock.todo.Todo as ProducedTodo
 import community.flock.todo.Todo as PotentialTodo
 
 data class Todo(
@@ -15,27 +15,9 @@ data class Todo(
     val completed: Boolean,
     val createdAt: LocalDateTime,
     val dueDate: LocalDateTime?
-) : Data, Exposable<ExposedTodo>, Externalizable<PersistedTodo> {
+) : Data, ProducedAs<ProducedTodo>, ExternalizedAs<PersistedTodo> {
 
-    constructor(todo: PotentialTodo) : this(
-        id = todo.id,
-        title = todo.title,
-        description = todo.description,
-        completed = todo.completed,
-        createdAt = LocalDateTime.parse(todo.createdAt),
-        dueDate = LocalDateTime.parse(todo.dueDate)
-    )
-
-    constructor(todo: PersistedTodo) : this(
-        todo.id,
-        todo.title,
-        todo.description,
-        todo.completed,
-        LocalDateTime.parse(todo.createdAt),
-        todo.dueDate?.let { LocalDateTime.parse(it) }
-    )
-
-    override fun expose() = ExposedTodo(
+    override fun produce() = ProducedTodo(
         id,
         title,
         description,
@@ -63,5 +45,20 @@ data class PersistedTodo(
     val dueDate: String?
 )
 
-fun PotentialTodo.consume() = Todo(this)
-fun PersistedTodo.internalize() = Todo(this)
+fun PotentialTodo.consume() = Todo(
+    id,
+    title,
+    description,
+    completed,
+    LocalDateTime.parse(createdAt),
+    LocalDateTime.parse(dueDate)
+)
+
+fun PersistedTodo.internalize() = Todo(
+    id,
+    title,
+    description,
+    completed,
+    LocalDateTime.parse(createdAt),
+    dueDate?.let { LocalDateTime.parse(it) }
+)

@@ -2,7 +2,8 @@ package community.flock.common
 
 import io.ktor.application.Application
 
-object Env {
-    fun Application.getProp(property: String, default: String): String =
-        environment.config.propertyOrNull(property)?.getString() ?: default
-}
+fun Application.getProp(property: String, default: String): String = get(property) ?: default
+fun Application.getProp(property: String, default: Int): Int = get(property)?.toInt() ?: default
+
+
+private fun Application.get(property: String): String? = environment.config.propertyOrNull(property)?.getString()

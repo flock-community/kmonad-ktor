@@ -1,22 +1,21 @@
 package community.flock.todo.pipe
 
-import community.flock.AppException.Conflict
-import community.flock.AppException.InternalServerError
-import community.flock.AppException.NotFound
-import community.flock.common.define.DB
-import community.flock.common.define.HasDatabaseClient
-import community.flock.common.define.HasLogger
+import community.flock.common.DB
+import community.flock.common.HasLive
+import community.flock.kmonad.core.AppException.Conflict
+import community.flock.kmonad.core.AppException.InternalServerError
+import community.flock.kmonad.core.AppException.NotFound
+import community.flock.kmonad.core.common.define.Has
 import community.flock.todo.data.PersistedTodo
 import community.flock.todo.data.Todo
 import community.flock.todo.data.internalize
-import community.flock.todo.define.Repository
 import kotlinx.coroutines.flow.map
 import org.litote.kmongo.eq
 import java.util.UUID
 
-interface LiveRepositoryContext : HasDatabaseClient, HasLogger
+interface LiveContext : HasLive.DatabaseClient, Has.Logger
 
-class LiveRepository(ctx: LiveRepositoryContext) : Repository {
+class LiveRepository(ctx: LiveContext) : Repository {
 
     private val collection = ctx.databaseClient.getDatabase(DB.Todos.name).getCollection<PersistedTodo>("todo")
 
@@ -42,7 +41,7 @@ class LiveRepository(ctx: LiveRepositoryContext) : Repository {
 
 }
 
-private suspend fun <R> guard(block: suspend () -> R) = try {
+private inline fun <A> guard(block: () -> A) = try {
     block()
 } catch (e: Exception) {
     throw InternalServerError(e.cause)

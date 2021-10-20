@@ -1,9 +1,13 @@
 package community.flock.todo.pipe
 
-import community.flock.AppException
+import community.flock.common.define.Has
+import community.flock.kmonad.core.AppException.BadRequest
 import community.flock.todo.data.Todo
-import community.flock.todo.define.Context
 import java.util.UUID
+
+
+interface Context : Has.TodoRepository
+
 
 suspend fun Context.bindGet() = getAll()
 
@@ -13,8 +17,9 @@ suspend fun Context.bindPost(todo: Todo) = save(todo)
 
 suspend fun Context.bindDelete(uuidString: String?) = deleteByUUID(validate { UUID.fromString(uuidString) })
 
-private fun <R> validate(block: () -> R) = try {
+
+private fun <A> validate(block: () -> A) = try {
     block()
 } catch (e: Exception) {
-    throw AppException.BadRequest()
+    throw BadRequest()
 }

@@ -1,22 +1,21 @@
-package community.flock.sith.pipe
+package community.flock.sith
 
 import com.mongodb.DuplicateKeyException
 import com.mongodb.MongoException
-import community.flock.AppException.Conflict
-import community.flock.AppException.InternalServerError
-import community.flock.AppException.NotFound
-import community.flock.common.define.DB
-import community.flock.common.define.HasDatabaseClient
-import community.flock.common.define.HasLogger
-import community.flock.jedi.pipe.LiveRepositoryContext
-import community.flock.sith.data.Sith
-import community.flock.sith.define.Repository
+import community.flock.common.DB
+import community.flock.common.HasLive
+import community.flock.kmonad.core.AppException.Conflict
+import community.flock.kmonad.core.AppException.InternalServerError
+import community.flock.kmonad.core.AppException.NotFound
+import community.flock.kmonad.core.common.define.Has
+import community.flock.kmonad.core.sith.data.Sith
+import community.flock.kmonad.core.sith.pipe.Repository
 import org.litote.kmongo.eq
 import java.util.UUID
 
-interface LiveRepositoryContext : HasDatabaseClient, HasLogger
+interface LiveContext : HasLive.DatabaseClient, Has.Logger
 
-class LiveRepository(ctx: LiveRepositoryContext) : Repository {
+class LiveRepository(ctx: LiveContext) : Repository {
 
     private val collection = ctx.databaseClient.getDatabase(DB.StarWars.name).getCollection<Sith>()
 
@@ -40,7 +39,7 @@ class LiveRepository(ctx: LiveRepositoryContext) : Repository {
 
 }
 
-private suspend fun <R> guard(block: suspend () -> R) = try {
+private suspend fun <A> guard(block: suspend () -> A) = try {
     block()
 } catch (e: DuplicateKeyException) {
     throw Conflict(null, e.cause)

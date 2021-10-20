@@ -9,8 +9,8 @@ import com.papsign.ktor.openapigen.route.path.normal.post
 import com.papsign.ktor.openapigen.route.response.respond
 import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.throws
-import community.flock.AppException
-import community.flock.common.define.Data
+import community.flock.kmonad.core.AppException
+import community.flock.kmonad.core.common.define.Data
 import io.ktor.application.Application
 import io.ktor.http.HttpStatusCode
 

@@ -1,1 +1,1 @@
-rootProject.name = "kmonad"
+rootProject.name = "kmonad-ktor"

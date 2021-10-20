@@ -1,17 +1,20 @@
 package sith
 
-import community.flock.sith.data.Sith
-import community.flock.sith.define.Repository
-import kotlinx.coroutines.flow.first
+import community.flock.kmonad.core.sith.data.Sith
+import community.flock.kmonad.core.sith.pipe.Repository
 import kotlinx.coroutines.flow.flowOf
 import java.util.UUID
 
 object TestRepository : Repository {
-    override suspend fun getAll() = flowOf(Sith(name = "Kasper", age = 32), Sith(name = "Willem", age = 34))
 
-    override suspend fun getByUUID(uuid: UUID) = getAll().first()
+    private val sith = Sith(name = "Darth Sidious", age = 86)
+
+    override suspend fun getAll() = flowOf(sith)
+
+    override suspend fun getByUUID(uuid: UUID) = sith
 
     override suspend fun save(sith: Sith) = sith
 
-    override suspend fun deleteByUUID(uuid: UUID) = getByUUID(uuid)
+    override suspend fun deleteByUUID(uuid: UUID) = sith
+
 }

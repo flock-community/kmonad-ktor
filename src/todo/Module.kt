@@ -2,7 +2,7 @@ package community.flock.todo
 
 import community.flock.common.LiveLayer.Companion.getLayer
 import community.flock.todo.data.consume
-import community.flock.todo.define.Context
+import community.flock.todo.pipe.Context
 import community.flock.todo.pipe.LiveRepository
 import community.flock.todo.pipe.bindDelete
 import community.flock.todo.pipe.bindGet
@@ -21,9 +21,9 @@ fun Application.module() {
 
 fun Application.moduleWith(context: Context) {
     todoApi(object : Routes {
-        override suspend fun get() = context.bindGet().map { it.expose() }.toList()
-        override suspend fun getByUUID(uuid: String) = context.bindGet(uuid).expose()
-        override suspend fun post(todo: PotentialTodo) = context.bindPost(todo.consume()).expose()
-        override suspend fun deleteByUUID(uuid: String) = context.bindDelete(uuid).expose()
+        override suspend fun get() = context.bindGet().map { it.produce() }.toList()
+        override suspend fun getByUUID(uuid: String) = context.bindGet(uuid).produce()
+        override suspend fun post(todo: PotentialTodo) = context.bindPost(todo.consume()).produce()
+        override suspend fun deleteByUUID(uuid: String) = context.bindDelete(uuid).produce()
     })
 }

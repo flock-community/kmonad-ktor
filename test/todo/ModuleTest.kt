@@ -1,8 +1,7 @@
 package todo
 
-import common.TestLayer
 import community.flock.main
-import community.flock.todo.define.Context
+import community.flock.todo.pipe.Context
 import community.flock.todo.moduleWith
 import io.ktor.http.HttpMethod
 import io.ktor.server.testing.TestApplicationCall
@@ -37,7 +36,7 @@ class ModuleTest {
         withTestApplication({
             main()
             moduleWith(object : Context {
-                override val toDoRepository = TestLayer.todoRepository
+                override val toDoRepository = TestRepository
             })
         }) { block() }
     }

@@ -1,12 +1,11 @@
 package common
 
 import com.mongodb.ConnectionString
-import io.ktor.application.Application
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
-import community.flock.jedi.pipe.LiveRepositoryContext as LiveJediRepositoryContext
-import community.flock.sith.pipe.LiveRepositoryContext as LiveSithRepositoryContext
-import community.flock.todo.pipe.LiveRepositoryContext as LiveTodoRepositoryContext
+import community.flock.jedi.LiveContext as LiveJediRepositoryContext
+import community.flock.sith.LiveContext as LiveSithRepositoryContext
+import community.flock.todo.pipe.LiveContext as LiveTodoRepositoryContext
 
 class IntegrationTestLayer private constructor() :
     LiveJediRepositoryContext,
@@ -17,7 +16,7 @@ class IntegrationTestLayer private constructor() :
     override val logger = TestLogger
 
     companion object {
-        fun Application.getLayer() = instance()
+        fun getLayer() = instance()
 
         @Volatile
         private var INSTANCE: IntegrationTestLayer? = null

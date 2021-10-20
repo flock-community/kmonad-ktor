@@ -11,20 +11,17 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.File
-import community.flock.jedi.define.Context as JediContext
 import community.flock.jedi.moduleWith as jediModuleWith
-import community.flock.sith.define.Context as SithContext
+import community.flock.kmonad.core.jedi.pipe.Context as JediContext
+import community.flock.kmonad.core.sith.pipe.Context as SithContext
+import community.flock.kmonad.core.wielders.pipe.Context as ForceWieldersContext
 import community.flock.sith.moduleWith as sithModuleWith
-import community.flock.todo.define.Context as ToDoContext
+import community.flock.todo.pipe.Context as ToDoContext
 import community.flock.todo.moduleWith as toDoModuleWith
-import community.flock.wielders.define.Context as ForceWieldersContext
 import community.flock.wielders.moduleWith as forceWieldersModuleWith
-import jedi.TestRepository as JediTestRepository
-import sith.TestRepository as SithTestRepository
-import todo.TestRepository as ToDoTestRepository
 
 @ExperimentalCoroutinesApi
-class ModuleTest {
+class GenerateSwaggerFile {
 
     @Test
     fun generateSwaggerJson() = setup {
@@ -39,19 +36,19 @@ class ModuleTest {
             main()
             jediModuleWith(object : JediContext {
                 override val logger = TestLogger
-                override val jediRepository = JediTestRepository
+                override val jediRepository = jedi.TestRepository
             })
             sithModuleWith(object : SithContext {
                 override val logger = TestLogger
-                override val sithRepository = SithTestRepository
+                override val sithRepository = sith.TestRepository
             })
             forceWieldersModuleWith(object : ForceWieldersContext {
                 override val logger = TestLogger
-                override val jediRepository = JediTestRepository
-                override val sithRepository = SithTestRepository
+                override val jediRepository = jedi.TestRepository
+                override val sithRepository = sith.TestRepository
             })
             toDoModuleWith(object : ToDoContext {
-                override val toDoRepository = ToDoTestRepository
+                override val toDoRepository = todo.TestRepository
             })
         }) { block() }
     }

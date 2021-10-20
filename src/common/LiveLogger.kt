@@ -1,15 +1,13 @@
 package community.flock.common
 
-import community.flock.common.define.Logger
+import community.flock.kmonad.core.common.define.Logger
 
 object LiveLogger : Logger {
-    override fun log(s: String) = println(s)
 
-    override fun error() {
-        TODO("Not yet implemented")
-    }
+    override fun error(string: String) = System.err.println("ERROR: $string")
 
-    override fun warn() {
-        TODO("Not yet implemented")
-    }
+    override fun log(string: String) = println("LOG: $string")
+
+    override fun warn(string: String) = println("WARN: $string")
+
 }
