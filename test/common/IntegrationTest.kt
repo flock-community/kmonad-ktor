@@ -1,7 +1,6 @@
 package common
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import common.IntegrationTestLayer.Companion.getLayer
 import community.flock.kmonad.core.common.define.Data
 import community.flock.kmonad.core.jedi.data.Jedi
 import community.flock.kmonad.core.sith.data.Sith
@@ -17,6 +16,7 @@ import io.ktor.server.testing.TestApplicationResponse
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -28,12 +28,15 @@ import community.flock.jedi.LiveRepository as LiveJediRepository
 import community.flock.jedi.moduleWith as jediModuleWith
 import community.flock.kmonad.core.jedi.pipe.Context as JediContext
 import community.flock.kmonad.core.sith.pipe.Context as SithContext
+import community.flock.kmonad.core.wielders.pipe.Context as WieldersContext
 import community.flock.sith.LiveRepository as LiveSithRepository
 import community.flock.sith.moduleWith as sithModuleWith
-import community.flock.todo.pipe.Context as TodoContext
 import community.flock.todo.moduleWith as todoModuleWith
+import community.flock.todo.pipe.Context as TodoContext
 import community.flock.todo.pipe.LiveRepository as LiveTodoRepository
+import community.flock.wielders.moduleWith as wieldersModuleWith
 
+@ExperimentalCoroutinesApi
 class IntegrationTest {
 
     @Test
@@ -52,6 +55,38 @@ class IntegrationTest {
             Sith(name = "Darth Plagueis", age = 123),
             Sith(name = "Darth Sidious", age = 234)
         )
+    }
+
+    @Test
+    fun testWieldersModule() = setup {
+        val jedi = Jedi(name = "Mace Windu", age = 54)
+        val sith = Sith(name = "Dart Sidiuous", age = 234)
+
+        handleRequest(HttpMethod.Post, "/jedi") {
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(jedi.toJson())
+        }
+
+        handleRequest(HttpMethod.Post, "/sith") {
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(sith.toJson())
+        }
+
+        handleRequest(HttpMethod.Get, "/force-wielders").apply {
+            assertEquals(HttpStatusCode.OK, response.status())
+            response.contains(jedi.id)
+            response.contains("LIGHT")
+            response.contains(sith.id)
+            response.contains("DARK")
+        }
+
+        handleRequest(HttpMethod.Get, "/force-wielders/${jedi.id}").apply {
+            assertEquals(HttpStatusCode.OK, response.status())
+            response.contains(jedi.id)
+            response.contains("LIGHT")
+            response.doesNotContain(sith.id)
+            response.doesNotContain("DARK")
+        }
     }
 
     @Test
@@ -139,15 +174,20 @@ class IntegrationTest {
         withTestApplication({
             main()
             jediModuleWith(object : JediContext {
-                override val jediRepository = LiveJediRepository(getLayer())
-                override val logger = getLayer().logger
+                override val jediRepository = LiveJediRepository(IntegrationTestLayer)
+                override val logger = IntegrationTestLayer.logger
             })
             sithModuleWith(object : SithContext {
-                override val sithRepository = LiveSithRepository(getLayer())
-                override val logger = getLayer().logger
+                override val sithRepository = LiveSithRepository(IntegrationTestLayer)
+                override val logger = IntegrationTestLayer.logger
+            })
+            wieldersModuleWith(object : WieldersContext {
+                override val jediRepository = LiveJediRepository(IntegrationTestLayer)
+                override val sithRepository = LiveSithRepository(IntegrationTestLayer)
+                override val logger = IntegrationTestLayer.logger
             })
             todoModuleWith(object : TodoContext {
-                override val toDoRepository = LiveTodoRepository(getLayer())
+                override val toDoRepository = LiveTodoRepository(IntegrationTestLayer)
             })
         }) { block() }
     }

@@ -11,13 +11,16 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.File
+import community.flock.jedi.LiveRepository as LiveJediRepository
 import community.flock.jedi.moduleWith as jediModuleWith
 import community.flock.kmonad.core.jedi.pipe.Context as JediContext
 import community.flock.kmonad.core.sith.pipe.Context as SithContext
 import community.flock.kmonad.core.wielders.pipe.Context as ForceWieldersContext
+import community.flock.sith.LiveRepository as LiveSithRepository
 import community.flock.sith.moduleWith as sithModuleWith
-import community.flock.todo.pipe.Context as ToDoContext
 import community.flock.todo.moduleWith as toDoModuleWith
+import community.flock.todo.pipe.Context as ToDoContext
+import community.flock.todo.pipe.LiveRepository as LiveTodoRepository
 import community.flock.wielders.moduleWith as forceWieldersModuleWith
 
 @ExperimentalCoroutinesApi
@@ -35,20 +38,20 @@ class GenerateSwaggerFile {
         withTestApplication({
             main()
             jediModuleWith(object : JediContext {
-                override val logger = TestLogger
-                override val jediRepository = jedi.TestRepository
+                override val jediRepository = LiveJediRepository(IntegrationTestLayer)
+                override val logger = IntegrationTestLayer.logger
             })
             sithModuleWith(object : SithContext {
-                override val logger = TestLogger
-                override val sithRepository = sith.TestRepository
+                override val sithRepository = LiveSithRepository(IntegrationTestLayer)
+                override val logger = IntegrationTestLayer.logger
             })
             forceWieldersModuleWith(object : ForceWieldersContext {
-                override val logger = TestLogger
-                override val jediRepository = jedi.TestRepository
-                override val sithRepository = sith.TestRepository
+                override val jediRepository = LiveJediRepository(IntegrationTestLayer)
+                override val sithRepository = LiveSithRepository(IntegrationTestLayer)
+                override val logger = IntegrationTestLayer.logger
             })
             toDoModuleWith(object : ToDoContext {
-                override val toDoRepository = todo.TestRepository
+                override val toDoRepository = LiveTodoRepository(IntegrationTestLayer)
             })
         }) { block() }
     }
