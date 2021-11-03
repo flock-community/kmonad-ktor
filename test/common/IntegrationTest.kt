@@ -2,9 +2,9 @@ package common
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import community.flock.kmonad.core.common.define.Data
+import community.flock.kmonad.core.droids.data.Droid
 import community.flock.kmonad.core.jedi.data.Jedi
 import community.flock.kmonad.core.sith.data.Sith
-import community.flock.main
 import community.flock.todo.data.Todo
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -15,7 +15,6 @@ import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.TestApplicationResponse
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
-import io.ktor.server.testing.withTestApplication
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -24,17 +23,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDateTime
 import java.util.UUID
-import community.flock.jedi.LiveRepository as LiveJediRepository
-import community.flock.jedi.moduleWith as jediModuleWith
-import community.flock.kmonad.core.jedi.pipe.Context as JediContext
-import community.flock.kmonad.core.sith.pipe.Context as SithContext
-import community.flock.kmonad.core.wielders.pipe.Context as WieldersContext
-import community.flock.sith.LiveRepository as LiveSithRepository
-import community.flock.sith.moduleWith as sithModuleWith
-import community.flock.todo.moduleWith as todoModuleWith
-import community.flock.todo.pipe.Context as TodoContext
-import community.flock.todo.pipe.LiveRepository as LiveTodoRepository
-import community.flock.wielders.moduleWith as wieldersModuleWith
 
 @ExperimentalCoroutinesApi
 class IntegrationTest {
@@ -87,6 +75,15 @@ class IntegrationTest {
             response.doesNotContain(sith.id)
             response.doesNotContain("DARK")
         }
+    }
+
+    @Test
+    fun testDroidModule() = setup {
+        testCrud(
+            "/droids",
+            Droid(designation = "4-LOM", type = Droid.Type.Protocol),
+            Droid(designation = "R5-D4", type = Droid.Type.Astromech)
+        )
     }
 
     @Test
@@ -168,28 +165,6 @@ class IntegrationTest {
             assertEquals(HttpStatusCode.NotFound, response.status())
             assertNull(response.content)
         }
-    }
-
-    private fun setup(block: TestApplicationEngine.() -> TestApplicationCall) {
-        withTestApplication({
-            main()
-            jediModuleWith(object : JediContext {
-                override val jediRepository = LiveJediRepository(IntegrationTestLayer)
-                override val logger = IntegrationTestLayer.logger
-            })
-            sithModuleWith(object : SithContext {
-                override val sithRepository = LiveSithRepository(IntegrationTestLayer)
-                override val logger = IntegrationTestLayer.logger
-            })
-            wieldersModuleWith(object : WieldersContext {
-                override val jediRepository = LiveJediRepository(IntegrationTestLayer)
-                override val sithRepository = LiveSithRepository(IntegrationTestLayer)
-                override val logger = IntegrationTestLayer.logger
-            })
-            todoModuleWith(object : TodoContext {
-                override val toDoRepository = LiveTodoRepository(IntegrationTestLayer)
-            })
-        }) { block() }
     }
 
     private fun Any.toJson() = jacksonObjectMapper().writeValueAsString(this)

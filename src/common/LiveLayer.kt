@@ -4,6 +4,7 @@ import com.mongodb.ConnectionString
 import io.ktor.application.Application
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
+import community.flock.droids.LiveContext as LiveDroidRepositoryContext
 import community.flock.jedi.LiveContext as LiveJediRepositoryContext
 import community.flock.sith.LiveContext as LiveSithRepositoryContext
 import community.flock.todo.pipe.LiveContext as LiveTodoRepositoryContext
@@ -16,6 +17,7 @@ private interface Props {
 class LiveLayer private constructor(props: Props) :
     LiveJediRepositoryContext,
     LiveSithRepositoryContext,
+    LiveDroidRepositoryContext,
     LiveTodoRepositoryContext {
 
     private val connectionString = ConnectionString("mongodb://${props.host}:${props.port}")

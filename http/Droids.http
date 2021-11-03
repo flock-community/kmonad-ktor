@@ -1,0 +1,26 @@
+GET http://localhost:8080/droids
+Accept: application/json
+
+###
+
+GET http://localhost:8080/droids/d7c1280e-72a8-410c-bdbc-633c73154933
+Accept: application/json
+
+###
+
+POST http://localhost:8080/droids
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id": "5467acb9-7315-4669-ad37-aeec3175cfe1",
+  "designation": "C1-10P",
+  "type": "Astromech"
+}
+
+###
+
+DELETE http://localhost:8080/droids/5467acb9-7315-4669-ad37-aeec3175cfe1
+Accept: application/json
+
+###

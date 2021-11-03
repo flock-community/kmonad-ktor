@@ -5,6 +5,7 @@ import community.flock.kmonad.core.common.define.Logger
 import org.junit.Assert.assertTrue
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
+import community.flock.droids.LiveContext as LiveDroidRepositoryContext
 import community.flock.jedi.LiveContext as LiveJediRepositoryContext
 import community.flock.sith.LiveContext as LiveSithRepositoryContext
 import community.flock.todo.pipe.LiveContext as LiveTodoRepositoryContext
@@ -12,6 +13,7 @@ import community.flock.todo.pipe.LiveContext as LiveTodoRepositoryContext
 object IntegrationTestLayer :
     LiveJediRepositoryContext,
     LiveSithRepositoryContext,
+    LiveDroidRepositoryContext,
     LiveTodoRepositoryContext {
 
     override val databaseClient = KMongo.createClient(ConnectionString("mongodb://localhost:12345")).coroutine
