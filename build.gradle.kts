@@ -4,7 +4,6 @@ val logback_version: String by project
 val ktor_version: String by project
 val jackson_version: String by project
 val kotlin_version: String by project
-val arrow_version: String by project
 val kmongo_version: String by project
 val swagger_generator_version: String by project
 
@@ -39,10 +38,8 @@ dependencies {
     implementation("io.ktor:ktor-jackson:$ktor_version")
     implementation("community.flock:kmonad-core:0.0.1-SNAPSHOT")
     implementation("org.litote.kmongo:kmongo-coroutine:$kmongo_version")
-    implementation("io.arrow-kt:arrow-core:$arrow_version")
     implementation("com.github.papsign:Ktor-OpenAPI-Generator:$swagger_generator_version")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
-    kapt("io.arrow-kt:arrow-meta:$arrow_version")
 }
 
 kotlin {
