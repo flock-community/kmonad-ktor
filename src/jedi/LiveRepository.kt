@@ -11,7 +11,7 @@ import community.flock.kmonad.core.AppException.Conflict
 import community.flock.kmonad.core.AppException.InternalServerError
 import community.flock.kmonad.core.AppException.NotFound
 import community.flock.kmonad.core.common.IO
-import community.flock.kmonad.core.common.define.Has
+import community.flock.kmonad.core.common.define.HasLogger
 import community.flock.kmonad.core.jedi.data.Jedi
 import community.flock.kmonad.core.jedi.pipe.Repository
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +20,7 @@ import org.litote.kmongo.eq
 import java.util.UUID
 import arrow.core.computations.either as eitherEffectFromArrow
 
-interface LiveContext : HasLive.DatabaseClient, Has.Logger
+interface LiveContext : HasLive.DatabaseClient, HasLogger
 
 @Suppress("IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION")
 class LiveRepository(ctx: LiveContext) : Repository {

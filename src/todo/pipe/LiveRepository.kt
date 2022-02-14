@@ -5,7 +5,7 @@ import community.flock.common.HasLive
 import community.flock.kmonad.core.AppException.Conflict
 import community.flock.kmonad.core.AppException.InternalServerError
 import community.flock.kmonad.core.AppException.NotFound
-import community.flock.kmonad.core.common.define.Has
+import community.flock.kmonad.core.common.define.HasLogger
 import community.flock.todo.data.PersistedTodo
 import community.flock.todo.data.Todo
 import community.flock.todo.data.internalize
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.map
 import org.litote.kmongo.eq
 import java.util.UUID
 
-interface LiveContext : HasLive.DatabaseClient, Has.Logger
+interface LiveContext : HasLive.DatabaseClient, HasLogger
 
 class LiveRepository(ctx: LiveContext) : Repository {
 
