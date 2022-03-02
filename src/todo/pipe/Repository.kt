@@ -5,6 +5,10 @@ import community.flock.todo.data.Todo
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
+interface HasTodoRepository {
+    val toDoRepository: Repository
+}
+
 interface Repository : Dependency {
 
     suspend fun getAll(): Flow<Todo>

@@ -2,9 +2,9 @@ package common
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import community.flock.kmonad.core.common.define.Data
-import community.flock.kmonad.core.droids.data.Droid
-import community.flock.kmonad.core.jedi.data.Jedi
-import community.flock.kmonad.core.sith.data.Sith
+import community.flock.kmonad.core.droids.model.Droid
+import community.flock.kmonad.core.jedi.model.Jedi
+import community.flock.kmonad.core.sith.model.Sith
 import community.flock.todo.data.Todo
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders

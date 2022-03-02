@@ -1,12 +1,11 @@
 package community.flock.todo.pipe
 
-import community.flock.common.define.Has
 import community.flock.kmonad.core.AppException.BadRequest
 import community.flock.todo.data.Todo
 import java.util.UUID
 
 
-interface Context : Has.TodoRepository
+interface Context : HasTodoRepository
 
 
 suspend fun Context.bindGet() = getAll()

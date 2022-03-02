@@ -12,11 +12,11 @@ import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.throws
 import community.flock.common.LiveLayer.Companion.getLayer
 import community.flock.kmonad.core.AppException
-import community.flock.kmonad.core.jedi.data.Jedi
-import community.flock.kmonad.core.jedi.pipe.Context
-import community.flock.kmonad.core.jedi.pipe.bindDelete
-import community.flock.kmonad.core.jedi.pipe.bindGet
-import community.flock.kmonad.core.jedi.pipe.bindPost
+import community.flock.kmonad.core.jedi.model.Jedi
+import community.flock.kmonad.core.jedi.Context
+import community.flock.kmonad.core.jedi.bindDelete
+import community.flock.kmonad.core.jedi.bindGet
+import community.flock.kmonad.core.jedi.bindPost
 import io.ktor.application.Application
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Conflict

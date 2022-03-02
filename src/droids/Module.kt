@@ -14,11 +14,11 @@ import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.throws
 import community.flock.common.LiveLayer.Companion.getLayer
 import community.flock.kmonad.core.AppException
-import community.flock.kmonad.core.droids.data.Droid
-import community.flock.kmonad.core.droids.pipe.Context
-import community.flock.kmonad.core.droids.pipe.bindDelete
-import community.flock.kmonad.core.droids.pipe.bindGet
-import community.flock.kmonad.core.droids.pipe.bindPost
+import community.flock.kmonad.core.droids.model.Droid
+import community.flock.kmonad.core.droids.Context
+import community.flock.kmonad.core.droids.bindDelete
+import community.flock.kmonad.core.droids.bindGet
+import community.flock.kmonad.core.droids.bindPost
 import io.ktor.application.Application
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.flow.toList
@@ -28,7 +28,6 @@ fun Application.module() {
 
     moduleWith(object : Context {
         override val droidRepository = LiveRepository(getLayer())
-        override val logger = getLayer().logger
     })
 
 }

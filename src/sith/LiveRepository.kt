@@ -8,8 +8,8 @@ import community.flock.kmonad.core.AppException.Conflict
 import community.flock.kmonad.core.AppException.InternalServerError
 import community.flock.kmonad.core.AppException.NotFound
 import community.flock.kmonad.core.common.define.HasLogger
-import community.flock.kmonad.core.sith.data.Sith
-import community.flock.kmonad.core.sith.pipe.Repository
+import community.flock.kmonad.core.sith.model.Sith
+import community.flock.kmonad.core.sith.Repository
 import org.litote.kmongo.eq
 import java.util.UUID
 

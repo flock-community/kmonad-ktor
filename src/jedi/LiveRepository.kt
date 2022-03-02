@@ -12,8 +12,8 @@ import community.flock.kmonad.core.AppException.InternalServerError
 import community.flock.kmonad.core.AppException.NotFound
 import community.flock.kmonad.core.common.IO
 import community.flock.kmonad.core.common.define.HasLogger
-import community.flock.kmonad.core.jedi.data.Jedi
-import community.flock.kmonad.core.jedi.pipe.Repository
+import community.flock.kmonad.core.jedi.model.Jedi
+import community.flock.kmonad.core.jedi.Repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
 import org.litote.kmongo.eq

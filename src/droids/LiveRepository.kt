@@ -7,8 +7,8 @@ import arrow.core.right
 import community.flock.common.DB
 import community.flock.common.HasLive
 import community.flock.kmonad.core.AppException
-import community.flock.kmonad.core.droids.data.Droid
-import community.flock.kmonad.core.droids.pipe.Repository
+import community.flock.kmonad.core.droids.model.Droid
+import community.flock.kmonad.core.droids.Repository
 import kotlinx.coroutines.flow.Flow
 import org.litote.kmongo.eq
 import java.util.UUID
