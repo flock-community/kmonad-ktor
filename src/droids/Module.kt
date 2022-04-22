@@ -28,6 +28,7 @@ fun Application.module() {
 
     moduleWith(object : Context {
         override val droidRepository = LiveRepository(getLayer())
+        override val logger = getLayer().logger
     })
 
 }

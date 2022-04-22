@@ -12,18 +12,16 @@ import com.papsign.ktor.openapigen.route.throws
 import community.flock.common.LiveLayer.Companion.getLayer
 import community.flock.kmonad.core.AppException
 import community.flock.kmonad.core.sith.Context
-import community.flock.kmonad.core.sith.deleteByUUID
-import community.flock.kmonad.core.sith.getAll
-import community.flock.kmonad.core.sith.getByUUID
+import community.flock.kmonad.core.sith.bindDelete
+import community.flock.kmonad.core.sith.bindGet
+import community.flock.kmonad.core.sith.bindPost
 import community.flock.kmonad.core.sith.model.Sith
-import community.flock.kmonad.core.sith.save
 import io.ktor.application.Application
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import kotlinx.coroutines.flow.toList
-import java.util.UUID
 
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
@@ -43,30 +41,22 @@ fun Application.moduleWith(context: Context) {
             .throws(NotFound, AppException.NotFound::class)
             .throws(Conflict, AppException.Conflict::class) {
                 get<Unit, List<Sith>> {
-                    respond(context.getAll().toList())
+                    respond(context.bindGet().toList())
                 }
 
                 get<UuidParam, Sith> {
-                    val uuid = validate { UUID.fromString(it.uuidString) }
-                    respond(context.getByUUID(uuid))
+                    respond(context.bindGet(it.uuidString))
                 }
 
                 post<Unit, Sith, Sith> { _, sith ->
-                    respond(context.save(sith))
+                    respond(context.bindPost(sith))
                 }
 
                 delete<UuidParam, Sith> {
-                    val uuid = validate { UUID.fromString(it.uuidString) }
-                    respond(context.deleteByUUID(uuid))
+                    respond(context.bindDelete(it.uuidString))
                 }
             }
     }
-}
-
-private fun <A> validate(block: () -> A) = try {
-    block()
-} catch (e: Exception) {
-    throw AppException.BadRequest()
 }
 
 @Path("/{uuidString}")

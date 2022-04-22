@@ -9,8 +9,8 @@ val swagger_generator_version: String by project
 
 plugins {
     application
-    kotlin("jvm") version "1.5.0"
-    kotlin("kapt") version "1.5.0"
+    kotlin("jvm") version "1.6.21"
+    kotlin("kapt") version "1.6.21"
     id("com.sourcemuse.mongo") version "1.0.7"
 }
 
@@ -24,7 +24,6 @@ application {
 repositories {
     mavenCentral()
     mavenLocal()
-    jcenter()
     maven { url = uri("https://jitpack.io") }
 }
 
@@ -54,7 +53,8 @@ tasks {
     withType<KotlinCompile> {
         configureEach {
             kotlinOptions {
-                jvmTarget = "11"
+                jvmTarget = "17"
+                freeCompilerArgs = listOf("-Xcontext-receivers", "-Xskip-prerelease-check")
             }
         }
     }

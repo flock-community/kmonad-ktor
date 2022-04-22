@@ -1,6 +1,5 @@
 package community.flock.todo.pipe
 
-import community.flock.kmonad.core.common.define.Dependency
 import community.flock.todo.data.Todo
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
@@ -9,7 +8,7 @@ interface HasTodoRepository {
     val toDoRepository: Repository
 }
 
-interface Repository : Dependency {
+interface Repository {
 
     suspend fun getAll(): Flow<Todo>
 

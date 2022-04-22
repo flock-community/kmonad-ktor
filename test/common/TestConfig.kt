@@ -39,6 +39,7 @@ fun setup(block: TestApplicationEngine.() -> TestApplicationCall) {
         })
         droidModuleWith(object : DroidContext {
             override val droidRepository = LiveDroidRepository(IntegrationTestLayer)
+            override val logger = IntegrationTestLayer.logger
         })
         todoModuleWith(object : TodoContext {
             override val toDoRepository = LiveTodoRepository(IntegrationTestLayer)
