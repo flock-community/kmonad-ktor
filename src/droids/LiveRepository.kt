@@ -1,56 +1,67 @@
 package community.flock.droids
 
-import arrow.core.Either
-import arrow.core.computations.either
-import arrow.core.left
-import arrow.core.right
+import arrow.core.continuations.EffectScope
+import arrow.core.continuations.effect
 import community.flock.common.DB
 import community.flock.common.HasLive
 import community.flock.kmonad.core.AppException
+import community.flock.kmonad.core.AppException.Conflict
+import community.flock.kmonad.core.AppException.InternalServerError
+import community.flock.kmonad.core.AppException.NotFound
 import community.flock.kmonad.core.droids.model.Droid
 import community.flock.kmonad.core.droids.Repository
-import kotlinx.coroutines.flow.Flow
 import org.litote.kmongo.eq
 import java.util.UUID
 
+typealias HasAppException = EffectScope<AppException>
+
+
 interface LiveContext : HasLive.DatabaseClient
 
-@Suppress("IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION")
 class LiveRepository(ctx: LiveContext) : Repository {
 
     private val collection = ctx.databaseClient.getDatabase(DB.StarWars.name).getCollection<Droid>()
 
 
-    override suspend fun getAll(): Either<AppException, Flow<Droid>> = guard { collection.find().toFlow() }
+    context(HasAppException)
+            override suspend fun getAll() = guard { collection.find().toFlow() }
 
-    override suspend fun getByUUID(uuid: UUID): Either<AppException, Droid> = either {
-        val maybeDroid = guard { collection.findOne(Droid::id eq uuid.toString()) }.bind()
-        maybeDroid ?: AppException.NotFound(uuid).left().bind()
+    context(HasAppException)
+            override suspend fun getByUUID(uuid: UUID): Droid {
+        val maybeDroid = guard { collection.findOne(Droid::id eq uuid.toString()) }
+        return maybeDroid ?: shift(NotFound(uuid))
     }
 
-    override suspend fun save(droid: Droid): Either<AppException, Droid> = either {
+    context(HasAppException)
+            override suspend fun save(droid: Droid): Droid {
         val uuid = UUID.fromString(droid.id)
-        val existingDroid = getByUUID(uuid)
-        if (existingDroid.isRight()) AppException.Conflict(uuid).left().bind() else {
-            val result = guard { collection.insertOne(droid) }.bind()
+        val result = effect<AppException, Droid> {
+            getByUUID(uuid)
+        }.fold({
+            val result = guard { collection.insertOne(droid) }
             val maybeDroid = droid.takeIf { result.wasAcknowledged() }
-            maybeDroid ?: AppException.InternalServerError().left().bind()
-        }
+            maybeDroid ?: shift(InternalServerError())
+        }, { shift(Conflict(uuid)) })
+        return result
     }
 
-    override suspend fun deleteByUUID(uuid: UUID): Either<AppException, Droid> = either {
-        val droid = getByUUID(uuid).bind()
-        val result = guard { collection.deleteOne(Droid::id eq uuid.toString()) }.bind()
+    context(HasAppException)
+            override suspend fun deleteByUUID(uuid: UUID): Droid {
+        val droid = getByUUID(uuid)
+        val result = guard { collection.deleteOne(Droid::id eq uuid.toString()) }
         val maybeDroid = droid.takeIf { result.wasAcknowledged() }
-        maybeDroid ?: AppException.InternalServerError().left().bind()
+        return maybeDroid ?: shift(InternalServerError())
     }
 
 }
 
-private inline fun <A> guard(block: () -> A) = guardWith(AppException::InternalServerError, block)
+context(HasAppException)
+        private suspend inline fun <A> guard(block: () -> A) = guardWith(AppException::InternalServerError, block)
 
-private inline fun <E : AppException, A> guardWith(errorBlock: (ex: Exception) -> E, block: () -> A) = try {
-    block().right()
-} catch (ex: Exception) {
-    errorBlock(ex).left()
-}
+context(HasAppException)
+        private suspend inline fun <E : AppException, A> guardWith(errorBlock: (ex: Exception) -> E, block: () -> A) =
+    try {
+        block()
+    } catch (ex: Exception) {
+        shift(errorBlock(ex))
+    }

@@ -41,19 +41,19 @@ fun Application.moduleWith(context: Context) {
             .throws(HttpStatusCode.NotFound, AppException.NotFound::class)
             .throws(HttpStatusCode.Conflict, AppException.Conflict::class) {
                 get<Unit, List<Droid>> {
-                    handle { context.bindGet().map { it.toList() } }
+                    handle { context.bindGet().toEither().map { it.toList() } }
                 }
 
                 get<UuidParam, Droid> { params ->
-                    handle { context.bindGet(params.uuid) }
+                    handle { context.bindGet(params.uuid).toEither() }
                 }
 
                 post<Unit, Droid, Droid> { _, body ->
-                    handle { context.bindPost(body) }
+                    handle { context.bindPost(body).toEither() }
                 }
 
                 delete<UuidParam, Droid> { params ->
-                    handle { context.bindDelete(params.uuid) }
+                    handle { context.bindDelete(params.uuid).toEither() }
                 }
             }
     }

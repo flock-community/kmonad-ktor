@@ -1,4 +1,4 @@
-FROM openjdk:12-alpine
+FROM openjdk:17-alpine
 
 WORKDIR /app
 COPY build/libs/kmonad-*.jar /app

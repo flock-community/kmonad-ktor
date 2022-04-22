@@ -1,7 +1,8 @@
 package community.flock.jedi
 
 import arrow.core.Either
-import arrow.core.computations.EitherEffect
+import arrow.core.continuations.EffectScope
+import arrow.core.continuations.effect
 import arrow.core.left
 import arrow.core.right
 import community.flock.common.DB
@@ -18,7 +19,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
 import org.litote.kmongo.eq
 import java.util.UUID
-import arrow.core.computations.either as eitherEffectFromArrow
 
 interface LiveContext : HasLive.DatabaseClient, HasLogger
 
@@ -64,8 +64,8 @@ class LiveRepository(ctx: LiveContext) : Repository {
 }
 
 
-private inline fun <E, A> either(crossinline c: suspend EitherEffect<E, *>.() -> A) = runBlocking<Either<E, A>> {
-    eitherEffectFromArrow { c() }
+private inline fun <E, A> either(crossinline c: suspend EffectScope<E>.() -> A) = runBlocking {
+    effect<E,A> { c() }.toEither()
 }
 
 private inline fun <A> guard(block: () -> A) = guardWith(::InternalServerError, block)
