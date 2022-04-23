@@ -9,7 +9,9 @@ import community.flock.kmonad.core.common.monads.Either
 import community.flock.kmonad.core.common.monads.Either.Companion.left
 import community.flock.kmonad.core.common.monads.Either.Companion.right
 import community.flock.kmonad.core.common.monads.IO
+import community.flock.kmonad.core.common.monads.Option
 import community.flock.kmonad.core.common.monads.flatMap
+import community.flock.kmonad.core.common.monads.toOption
 import community.flock.kmonad.core.jedi.Repository
 import community.flock.kmonad.core.jedi.model.Jedi
 import kotlinx.coroutines.flow.Flow
@@ -26,7 +28,7 @@ class LiveRepository(ctx: LiveContext) : Repository {
 
     override fun getAll(): IO<Either<InternalServerError, Flow<Jedi>>> = IO { getAllAsEither() }
 
-    override fun getByUUID(uuid: UUID): IO<Either<AppException, Jedi>> = IO { getByUUIDAsEither(uuid) }
+    override fun getByUUID(uuid: UUID): IO<Either<AppException, Option<Jedi>>> = IO { getByUUIDAsEither(uuid) }
 
     override fun save(jedi: Jedi): IO<Either<AppException, Jedi>> = IO { saveAsEither(jedi) }
 
@@ -36,24 +38,26 @@ class LiveRepository(ctx: LiveContext) : Repository {
     private fun getAllAsEither() = guard { collection.find().toFlow() }
 
     private fun getByUUIDAsEither(uuid: UUID) = guard { collection.findOne(Jedi::id eq uuid.toString()) }
-        .flatMap { it?.right() ?: AppException.NotFound(uuid).left() }
+        .flatMap { it.toOption().right() }
 
     private fun saveAsEither(jedi: Jedi) = UUID.fromString(jedi.id).let { uuid ->
         getByUUIDAsEither(uuid)
-            .fold({ guard { collection.insertOne(jedi) } }, { AppException.Conflict(uuid).left() })
+            .flatMap { it.fold({ guard { collection.insertOne(jedi) } }, { AppException.Conflict(uuid).left() }) }
             .flatMap {
                 if (it.wasAcknowledged()) jedi.right()
                 else InternalServerError().left()
             }
     }
 
-    private fun deleteByUUIDAsEither(uuid: UUID) = getByUUIDAsEither(uuid).flatMap { jedi ->
-        guard { collection.deleteOne(Jedi::id eq jedi.id) }
-            .flatMap {
-                if (it.wasAcknowledged()) jedi.right()
-                else InternalServerError().left()
-            }
-    }
+    private fun deleteByUUIDAsEither(uuid: UUID) = getByUUIDAsEither(uuid)
+        .flatMap { option -> option.fold({ AppException.NotFound(uuid).left() }, { it.right() }) }
+        .flatMap { jedi ->
+            guard { collection.deleteOne(Jedi::id eq jedi.id) }
+                .flatMap {
+                    if (it.wasAcknowledged()) jedi.right()
+                    else InternalServerError().left()
+                }
+        }
 
 }
 
