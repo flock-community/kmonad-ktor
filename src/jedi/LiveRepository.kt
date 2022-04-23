@@ -12,7 +12,7 @@ import community.flock.kmonad.core.AppException.Conflict
 import community.flock.kmonad.core.AppException.InternalServerError
 import community.flock.kmonad.core.AppException.NotFound
 import community.flock.kmonad.core.common.monads.IO
-import community.flock.kmonad.core.common.define.HasLogger
+import community.flock.kmonad.core.common.HasLogger
 import community.flock.kmonad.core.jedi.model.Jedi
 import community.flock.kmonad.core.jedi.Repository
 import kotlinx.coroutines.flow.Flow

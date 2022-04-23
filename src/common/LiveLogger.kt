@@ -1,6 +1,6 @@
 package community.flock.common
 
-import community.flock.kmonad.core.common.define.Logger
+import community.flock.kmonad.core.common.Logger
 
 object LiveLogger : Logger {
 

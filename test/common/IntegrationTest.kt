@@ -1,11 +1,10 @@
 package common
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import community.flock.kmonad.core.common.define.Data
+import community.flock.kmonad.core.common.Data
 import community.flock.kmonad.core.droids.model.Droid
 import community.flock.kmonad.core.jedi.model.Jedi
 import community.flock.kmonad.core.sith.model.Sith
-import community.flock.todo.data.Todo
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -83,27 +82,6 @@ class IntegrationTest {
             "/droids",
             Droid(designation = "4-LOM", type = Droid.Type.Protocol),
             Droid(designation = "R5-D4", type = Droid.Type.Astromech)
-        )
-    }
-
-    @Test
-    fun testTodoModule() = setup {
-        testCrud(
-            "/todo",
-            Todo(
-                title = "toDo.title",
-                description = "toDo.description",
-                completed = false,
-                createdAt = LocalDateTime.now(),
-                dueDate = LocalDateTime.now().plusDays(1L)
-            ).produce(),
-            Todo(
-                title = "2nd.toDo.title",
-                description = "2nd.toDo.description",
-                completed = true,
-                createdAt = LocalDateTime.now().minusDays(2L),
-                dueDate = LocalDateTime.now().minusDays(1L)
-            ).produce()
         )
     }
 
