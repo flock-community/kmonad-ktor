@@ -1,6 +1,5 @@
 package community.flock.jedi
 
-import arrow.core.getOrHandle
 import com.papsign.ktor.openapigen.annotations.Path
 import com.papsign.ktor.openapigen.annotations.parameters.PathParam
 import com.papsign.ktor.openapigen.route.apiRouting
@@ -12,6 +11,7 @@ import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.throws
 import community.flock.common.LiveLayer.Companion.getLayer
 import community.flock.kmonad.core.AppException
+import community.flock.kmonad.core.common.monads.getOrHandle
 import community.flock.kmonad.core.jedi.model.Jedi
 import community.flock.kmonad.core.jedi.Context
 import community.flock.kmonad.core.jedi.bindDelete

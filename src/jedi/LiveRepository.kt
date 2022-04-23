@@ -1,20 +1,17 @@
 package community.flock.jedi
 
-import arrow.core.Either
-import arrow.core.continuations.EffectScope
-import arrow.core.continuations.effect
-import arrow.core.left
-import arrow.core.right
 import community.flock.common.DB
 import community.flock.common.HasLive
 import community.flock.kmonad.core.AppException
-import community.flock.kmonad.core.AppException.Conflict
 import community.flock.kmonad.core.AppException.InternalServerError
-import community.flock.kmonad.core.AppException.NotFound
-import community.flock.kmonad.core.common.monads.IO
 import community.flock.kmonad.core.common.HasLogger
-import community.flock.kmonad.core.jedi.model.Jedi
+import community.flock.kmonad.core.common.monads.Either
+import community.flock.kmonad.core.common.monads.Either.Companion.left
+import community.flock.kmonad.core.common.monads.Either.Companion.right
+import community.flock.kmonad.core.common.monads.IO
+import community.flock.kmonad.core.common.monads.flatMap
 import community.flock.kmonad.core.jedi.Repository
+import community.flock.kmonad.core.jedi.model.Jedi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
 import org.litote.kmongo.eq
@@ -22,7 +19,6 @@ import java.util.UUID
 
 interface LiveContext : HasLive.DatabaseClient, HasLogger
 
-@Suppress("IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION")
 class LiveRepository(ctx: LiveContext) : Repository {
 
     private val collection = ctx.databaseClient.getDatabase(DB.StarWars.name).getCollection<Jedi>()
@@ -37,41 +33,38 @@ class LiveRepository(ctx: LiveContext) : Repository {
     override fun deleteByUUID(uuid: UUID): IO<Either<AppException, Jedi>> = IO { deleteByUUIDAsEither(uuid) }
 
 
-    private fun getAllAsEither(): Either<InternalServerError, Flow<Jedi>> = guard { collection.find().toFlow() }
+    private fun getAllAsEither() = guard { collection.find().toFlow() }
 
-    private fun getByUUIDAsEither(uuid: UUID): Either<AppException, Jedi> = either {
-        val maybeJedi = guard { collection.findOne(Jedi::id eq uuid.toString()) }.bind()
-        maybeJedi ?: NotFound(uuid).left().bind()
+    private fun getByUUIDAsEither(uuid: UUID) = guard { collection.findOne(Jedi::id eq uuid.toString()) }
+        .flatMap { it?.right() ?: AppException.NotFound(uuid).left() }
+
+    private fun saveAsEither(jedi: Jedi) = UUID.fromString(jedi.id).let { uuid ->
+        getByUUIDAsEither(uuid)
+            .fold({ guard { collection.insertOne(jedi) } }, { AppException.Conflict(uuid).left() })
+            .flatMap {
+                if (it.wasAcknowledged()) jedi.right()
+                else InternalServerError().left()
+            }
     }
 
-    private fun saveAsEither(jedi: Jedi): Either<AppException, Jedi> = either {
-        val uuid = UUID.fromString(jedi.id)
-        val existingJedi = getByUUIDAsEither(uuid)
-        if (existingJedi.isRight()) Conflict(uuid).left().bind() else {
-            val result = guard { collection.insertOne(jedi) }.bind()
-            val maybeJedi = jedi.takeIf { result.wasAcknowledged() }
-            maybeJedi ?: InternalServerError().left().bind()
-        }
-    }
-
-    private fun deleteByUUIDAsEither(uuid: UUID): Either<AppException, Jedi> = either {
-        val jedi = getByUUIDAsEither(uuid).bind()
-        val result = guard { collection.deleteOne(Jedi::id eq uuid.toString()) }.bind()
-        val maybeJedi = jedi.takeIf { result.wasAcknowledged() }
-        maybeJedi ?: InternalServerError().left().bind()
+    private fun deleteByUUIDAsEither(uuid: UUID) = getByUUIDAsEither(uuid).flatMap { jedi ->
+        guard { collection.deleteOne(Jedi::id eq jedi.id) }
+            .flatMap {
+                if (it.wasAcknowledged()) jedi.right()
+                else InternalServerError().left()
+            }
     }
 
 }
 
 
-private inline fun <E, A> either(crossinline c: suspend EffectScope<E>.() -> A) = runBlocking {
-    effect<E,A> { c() }.toEither()
-}
+private fun <A> guard(block: suspend () -> A) = guardWith(AppException::InternalServerError, block)
 
-private inline fun <A> guard(block: () -> A) = guardWith(::InternalServerError, block)
 
-private inline fun <E : AppException, A> guardWith(errorBlock: (ex: Exception) -> E, block: () -> A) = try {
-    block().right()
-} catch (ex: Exception) {
-    errorBlock(ex).left()
+private fun <E : AppException, A> guardWith(errorBlock: (ex: Exception) -> E, block: suspend () -> A) = runBlocking {
+    try {
+        block().right()
+    } catch (ex: Exception) {
+        errorBlock(ex).left()
+    }
 }
