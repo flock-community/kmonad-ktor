@@ -9,9 +9,9 @@ import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.throws
 import community.flock.common.LiveLayer.Companion.getLayer
 import community.flock.kmonad.core.AppException
-import community.flock.kmonad.core.wielders.model.ForceWielder
-import community.flock.kmonad.core.wielders.Context
-import community.flock.kmonad.core.wielders.bindGet
+import community.flock.kmonad.core.forcewielder.model.ForceWielder
+import community.flock.kmonad.core.forcewielder.ForceWielderContext
+import community.flock.kmonad.core.forcewielder.bindGet
 import io.ktor.application.Application
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Conflict
@@ -26,7 +26,7 @@ import community.flock.sith.LiveRepository as LiveSithRepository
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
 
-    moduleWith(object : Context {
+    moduleWith(object : ForceWielderContext {
         override val jediRepository = LiveJediRepository(getLayer())
         override val sithRepository = LiveSithRepository(getLayer())
         override val logger = getLayer().logger
@@ -35,7 +35,7 @@ fun Application.module() {
 }
 
 @ExperimentalCoroutinesApi
-fun Application.moduleWith(context: Context) {
+fun Application.moduleWith(context: ForceWielderContext) {
     apiRouting {
         route("/force-wielders")
             .throws(InternalServerError, AppException.InternalServerError::class)

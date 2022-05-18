@@ -8,8 +8,8 @@ import community.flock.kmonad.core.AppException
 import community.flock.kmonad.core.AppException.Conflict
 import community.flock.kmonad.core.AppException.InternalServerError
 import community.flock.kmonad.core.AppException.NotFound
-import community.flock.kmonad.core.droids.model.Droid
-import community.flock.kmonad.core.droids.Repository
+import community.flock.kmonad.core.droid.DroidRepository
+import community.flock.kmonad.core.droid.model.Droid
 import org.litote.kmongo.eq
 import java.util.UUID
 
@@ -18,7 +18,7 @@ typealias HasAppException = EffectScope<AppException>
 
 interface LiveContext : HasLive.DatabaseClient
 
-class LiveRepository(ctx: LiveContext) : Repository {
+class LiveRepository(ctx: LiveContext) : DroidRepository {
 
     private val collection = ctx.databaseClient.getDatabase(DB.StarWars.name).getCollection<Droid>()
 

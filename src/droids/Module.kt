@@ -14,11 +14,11 @@ import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.throws
 import community.flock.common.LiveLayer.Companion.getLayer
 import community.flock.kmonad.core.AppException
-import community.flock.kmonad.core.droids.model.Droid
-import community.flock.kmonad.core.droids.Context
-import community.flock.kmonad.core.droids.bindDelete
-import community.flock.kmonad.core.droids.bindGet
-import community.flock.kmonad.core.droids.bindPost
+import community.flock.kmonad.core.droid.model.Droid
+import community.flock.kmonad.core.droid.DroidContext
+import community.flock.kmonad.core.droid.bindDelete
+import community.flock.kmonad.core.droid.bindGet
+import community.flock.kmonad.core.droid.bindPost
 import io.ktor.application.Application
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.flow.toList
@@ -26,14 +26,14 @@ import kotlinx.coroutines.flow.toList
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
 
-    moduleWith(object : Context {
+    moduleWith(object : DroidContext {
         override val droidRepository = LiveRepository(getLayer())
         override val logger = getLayer().logger
     })
 
 }
 
-fun Application.moduleWith(context: Context) {
+fun Application.moduleWith(context: DroidContext) {
     apiRouting {
         route("/droids")
             .throws(HttpStatusCode.InternalServerError, AppException.InternalServerError::class)

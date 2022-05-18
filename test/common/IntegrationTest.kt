@@ -2,7 +2,7 @@ package common
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import community.flock.kmonad.core.common.Data
-import community.flock.kmonad.core.droids.model.Droid
+import community.flock.kmonad.core.droid.model.Droid
 import community.flock.kmonad.core.jedi.model.Jedi
 import community.flock.kmonad.core.sith.model.Sith
 import io.ktor.http.ContentType

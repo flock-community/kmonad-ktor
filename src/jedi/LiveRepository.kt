@@ -12,7 +12,7 @@ import community.flock.kmonad.core.common.monads.IO
 import community.flock.kmonad.core.common.monads.Option
 import community.flock.kmonad.core.common.monads.flatMap
 import community.flock.kmonad.core.common.monads.toOption
-import community.flock.kmonad.core.jedi.Repository
+import community.flock.kmonad.core.jedi.JediRepository
 import community.flock.kmonad.core.jedi.model.Jedi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
@@ -21,12 +21,12 @@ import java.util.UUID
 
 interface LiveContext : HasLive.DatabaseClient, HasLogger
 
-class LiveRepository(ctx: LiveContext) : Repository {
+class LiveRepository(ctx: LiveContext) : JediRepository {
 
     private val collection = ctx.databaseClient.getDatabase(DB.StarWars.name).getCollection<Jedi>()
 
 
-    override fun getAll(): IO<Either<InternalServerError, Flow<Jedi>>> = IO { getAllAsEither() }
+    override fun getAll(): IO<Either<InternalServerError, List<Jedi>>> = IO { getAllAsEither() }
 
     override fun getByUUID(uuid: UUID): IO<Either<AppException, Option<Jedi>>> = IO { getByUUIDAsEither(uuid) }
 
@@ -35,7 +35,7 @@ class LiveRepository(ctx: LiveContext) : Repository {
     override fun deleteByUUID(uuid: UUID): IO<Either<AppException, Jedi>> = IO { deleteByUUIDAsEither(uuid) }
 
 
-    private fun getAllAsEither() = guard { collection.find().toFlow() }
+    private fun getAllAsEither() = guard { collection.find().toList() }
 
     private fun getByUUIDAsEither(uuid: UUID) = guard { collection.findOne(Jedi::id eq uuid.toString()) }
         .flatMap { it.toOption().right() }

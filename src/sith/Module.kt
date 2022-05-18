@@ -11,7 +11,7 @@ import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.throws
 import community.flock.common.LiveLayer.Companion.getLayer
 import community.flock.kmonad.core.AppException
-import community.flock.kmonad.core.sith.Context
+import community.flock.kmonad.core.sith.SithContext
 import community.flock.kmonad.core.sith.bindDelete
 import community.flock.kmonad.core.sith.bindGet
 import community.flock.kmonad.core.sith.bindPost
@@ -26,14 +26,14 @@ import kotlinx.coroutines.flow.toList
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
 
-    moduleWith(object : Context {
+    moduleWith(object : SithContext {
         override val sithRepository = LiveRepository(getLayer())
         override val logger = getLayer().logger
     })
 
 }
 
-fun Application.moduleWith(context: Context) {
+fun Application.moduleWith(context: SithContext) {
     apiRouting {
         route("/sith")
             .throws(InternalServerError, AppException.InternalServerError::class)
@@ -41,19 +41,19 @@ fun Application.moduleWith(context: Context) {
             .throws(NotFound, AppException.NotFound::class)
             .throws(Conflict, AppException.Conflict::class) {
                 get<Unit, List<Sith>> {
-                    respond(context.bindGet().toList())
+                    respond(context.bindGet().getOrThrow())
                 }
 
                 get<UuidParam, Sith> {
-                    respond(context.bindGet(it.uuidString))
+                    respond(context.bindGet(it.uuidString).getOrThrow())
                 }
 
                 post<Unit, Sith, Sith> { _, sith ->
-                    respond(context.bindPost(sith))
+                    respond(context.bindPost(sith).getOrThrow())
                 }
 
                 delete<UuidParam, Sith> {
-                    respond(context.bindDelete(it.uuidString))
+                    respond(context.bindDelete(it.uuidString).getOrThrow())
                 }
             }
     }

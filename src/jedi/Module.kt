@@ -12,7 +12,7 @@ import com.papsign.ktor.openapigen.route.throws
 import community.flock.common.LiveLayer.Companion.getLayer
 import community.flock.kmonad.core.AppException
 import community.flock.kmonad.core.common.monads.getOrHandle
-import community.flock.kmonad.core.jedi.Context
+import community.flock.kmonad.core.jedi.JediContext
 import community.flock.kmonad.core.jedi.bindDelete
 import community.flock.kmonad.core.jedi.bindGet
 import community.flock.kmonad.core.jedi.bindPost
@@ -27,14 +27,14 @@ import kotlinx.coroutines.flow.toList
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
 
-    moduleWith(object : Context {
+    moduleWith(object : JediContext {
         override val jediRepository = LiveRepository(getLayer())
         override val logger = getLayer().logger
     })
 
 }
 
-fun Application.moduleWith(context: Context) {
+fun Application.moduleWith(context: JediContext) {
     apiRouting {
         route("/jedi")
             .throws(InternalServerError, AppException.InternalServerError::class)

@@ -9,10 +9,10 @@ import community.flock.droids.LiveRepository as LiveDroidRepository
 import community.flock.droids.moduleWith as droidModuleWith
 import community.flock.jedi.LiveRepository as LiveJediRepository
 import community.flock.jedi.moduleWith as jediModuleWith
-import community.flock.kmonad.core.droids.Context as DroidContext
-import community.flock.kmonad.core.jedi.Context as JediContext
-import community.flock.kmonad.core.sith.Context as SithContext
-import community.flock.kmonad.core.wielders.Context as WieldersContext
+import community.flock.kmonad.core.droid.DroidContext
+import community.flock.kmonad.core.jedi.JediContext
+import community.flock.kmonad.core.sith.SithContext
+import community.flock.kmonad.core.forcewielder.ForceWielderContext
 import community.flock.sith.LiveRepository as LiveSithRepository
 import community.flock.sith.moduleWith as sithModuleWith
 import community.flock.wielders.moduleWith as wieldersModuleWith
@@ -29,7 +29,7 @@ fun setup(block: TestApplicationEngine.() -> TestApplicationCall) {
             override val sithRepository = LiveSithRepository(IntegrationTestLayer)
             override val logger = IntegrationTestLayer.logger
         })
-        wieldersModuleWith(object : WieldersContext {
+        wieldersModuleWith(object : ForceWielderContext {
             override val jediRepository = LiveJediRepository(IntegrationTestLayer)
             override val sithRepository = LiveSithRepository(IntegrationTestLayer)
             override val logger = IntegrationTestLayer.logger
