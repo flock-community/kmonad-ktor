@@ -2,9 +2,7 @@ package community.flock.common
 
 import org.litote.kmongo.coroutine.CoroutineClient
 
-enum class DB {
-    StarWars, Todos
-}
+enum class DB { StarWars }
 
 sealed interface HasLive {
 

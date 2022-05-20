@@ -18,7 +18,6 @@ import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.toList
 import community.flock.jedi.LiveRepository as LiveJediRepository
 import community.flock.sith.LiveRepository as LiveSithRepository
 

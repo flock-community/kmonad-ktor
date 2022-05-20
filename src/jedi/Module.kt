@@ -22,7 +22,6 @@ import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Conflict
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.NotFound
-import kotlinx.coroutines.flow.toList
 
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {

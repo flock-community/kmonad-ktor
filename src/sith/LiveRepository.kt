@@ -2,7 +2,6 @@ package community.flock.sith
 
 import com.mongodb.DuplicateKeyException
 import com.mongodb.MongoException
-import community.flock.common.DB
 import community.flock.common.DB.StarWars
 import community.flock.common.HasLive
 import community.flock.kmonad.core.AppException.Conflict
