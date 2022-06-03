@@ -1,7 +1,7 @@
 package community.flock.common
 
 import com.mongodb.ConnectionString
-import io.ktor.application.Application
+import io.ktor.server.application.Application
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
 import community.flock.droids.LiveContext as LiveDroidRepositoryContext

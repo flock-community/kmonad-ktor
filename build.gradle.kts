@@ -29,16 +29,20 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
-    implementation("io.ktor:ktor-server-netty:$ktor_version")
-    implementation("ch.qos.logback:logback-classic:$logback_version")
-    implementation("io.ktor:ktor-client-core:$ktor_version")
-    implementation("io.ktor:ktor-client-core-jvm:$ktor_version")
+
     implementation("io.ktor:ktor-server-core:$ktor_version")
-    implementation("io.ktor:ktor-jackson:$ktor_version")
+    implementation("io.ktor:ktor-server-netty:$ktor_version")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    implementation("io.ktor:ktor-serialization-jackson:$ktor_version")
+
+    implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("community.flock:kmonad-core:0.0.1-SNAPSHOT")
     implementation("org.litote.kmongo:kmongo-coroutine:$kmongo_version")
-    implementation("com.github.papsign:Ktor-OpenAPI-Generator:$swagger_generator_version")
-    testImplementation("io.ktor:ktor-server-tests:$ktor_version")
+    implementation("com.github.papsign:Ktor-OpenAPI-Generator:-SNAPSHOT")
+
+    testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
 }
 
 kotlin {
@@ -54,7 +58,7 @@ tasks {
         configureEach {
             kotlinOptions {
                 jvmTarget = "17"
-                freeCompilerArgs = listOf("-Xcontext-receivers", "-Xskip-prerelease-check")
+                freeCompilerArgs = listOf("-Xcontext-receivers", "-Xskip-prerelease-check" , "-opt-in=kotlin.RequiresOptIn")
             }
         }
     }
@@ -80,7 +84,6 @@ tasks {
         dependsOn(startManagedMongoDb)
     }
 }
-
 
 mongo {
     setPort(12345)

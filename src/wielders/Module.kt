@@ -1,22 +1,14 @@
 package community.flock.wielders
 
-import com.papsign.ktor.openapigen.annotations.Path
-import com.papsign.ktor.openapigen.annotations.parameters.PathParam
-import com.papsign.ktor.openapigen.route.apiRouting
-import com.papsign.ktor.openapigen.route.path.normal.get
-import com.papsign.ktor.openapigen.route.response.respond
-import com.papsign.ktor.openapigen.route.route
-import com.papsign.ktor.openapigen.route.throws
 import community.flock.common.LiveLayer.Companion.getLayer
-import community.flock.kmonad.core.AppException
-import community.flock.kmonad.core.forcewielder.model.ForceWielder
 import community.flock.kmonad.core.forcewielder.ForceWielderContext
 import community.flock.kmonad.core.forcewielder.bindGet
-import io.ktor.application.Application
-import io.ktor.http.HttpStatusCode.Companion.BadRequest
-import io.ktor.http.HttpStatusCode.Companion.Conflict
-import io.ktor.http.HttpStatusCode.Companion.InternalServerError
-import io.ktor.http.HttpStatusCode.Companion.NotFound
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
+import io.ktor.server.routing.route
+import io.ktor.server.routing.routing
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import community.flock.jedi.LiveRepository as LiveJediRepository
 import community.flock.sith.LiveRepository as LiveSithRepository
@@ -35,22 +27,16 @@ fun Application.module() {
 
 @ExperimentalCoroutinesApi
 fun Application.moduleWith(context: ForceWielderContext) {
-    apiRouting {
-        route("/force-wielders")
-            .throws(InternalServerError, AppException.InternalServerError::class)
-            .throws(BadRequest, AppException.BadRequest::class)
-            .throws(NotFound, AppException.NotFound::class)
-            .throws(Conflict, AppException.Conflict::class) {
-                get<Unit, List<ForceWielder>> {
-                    respond(context.bindGet().toList())
-                }
-
-                get<UuidParam, ForceWielder> { params ->
-                    respond(context.bindGet(params.uuid))
-                }
+    routing {
+        route("/force-wielders") {
+            get {
+                call.respond(context.bindGet())
             }
+
+            get("{uuid?}") {
+                val uuidString = call.parameters["uuid"]
+                call.respond(context.bindGet(uuidString))
+            }
+        }
     }
 }
-
-@Path("/{uuid}")
-data class UuidParam(@PathParam("UUID") val uuid: String)

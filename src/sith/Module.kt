@@ -1,26 +1,21 @@
 package community.flock.sith
 
-import com.papsign.ktor.openapigen.annotations.Path
-import com.papsign.ktor.openapigen.annotations.parameters.PathParam
-import com.papsign.ktor.openapigen.route.apiRouting
-import com.papsign.ktor.openapigen.route.path.normal.delete
-import com.papsign.ktor.openapigen.route.path.normal.get
-import com.papsign.ktor.openapigen.route.path.normal.post
-import com.papsign.ktor.openapigen.route.response.respond
-import com.papsign.ktor.openapigen.route.route
-import com.papsign.ktor.openapigen.route.throws
 import community.flock.common.LiveLayer.Companion.getLayer
-import community.flock.kmonad.core.AppException
+import community.flock.common.handleErrors
 import community.flock.kmonad.core.sith.SithContext
 import community.flock.kmonad.core.sith.bindDelete
 import community.flock.kmonad.core.sith.bindGet
 import community.flock.kmonad.core.sith.bindPost
 import community.flock.kmonad.core.sith.model.Sith
-import io.ktor.application.Application
-import io.ktor.http.HttpStatusCode.Companion.BadRequest
-import io.ktor.http.HttpStatusCode.Companion.Conflict
-import io.ktor.http.HttpStatusCode.Companion.InternalServerError
-import io.ktor.http.HttpStatusCode.Companion.NotFound
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
+import io.ktor.server.routing.delete
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.route
+import io.ktor.server.routing.routing
 
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
@@ -33,30 +28,26 @@ fun Application.module() {
 }
 
 fun Application.moduleWith(context: SithContext) {
-    apiRouting {
-        route("/sith")
-            .throws(InternalServerError, AppException.InternalServerError::class)
-            .throws(BadRequest, AppException.BadRequest::class)
-            .throws(NotFound, AppException.NotFound::class)
-            .throws(Conflict, AppException.Conflict::class) {
-                get<Unit, List<Sith>> {
-                    respond(context.bindGet().getOrThrow())
-                }
-
-                get<UuidParam, Sith> {
-                    respond(context.bindGet(it.uuidString).getOrThrow())
-                }
-
-                post<Unit, Sith, Sith> { _, sith ->
-                    respond(context.bindPost(sith).getOrThrow())
-                }
-
-                delete<UuidParam, Sith> {
-                    respond(context.bindDelete(it.uuidString).getOrThrow())
-                }
+    routing {
+        route("/sith") {
+            get {
+                context.bindGet().fold({ call.respond(it) }, { handleErrors(it) })
             }
+
+            get("{uuid?}") {
+                val uuidString = call.parameters["uuid"]
+                context.bindGet(uuidString).fold({ call.respond(it) }, { handleErrors(it) })
+            }
+
+            post {
+                val sith = call.receive<Sith>()
+                context.bindPost(sith).fold({ call.respond(it) }, { handleErrors(it) })
+            }
+
+            delete("{uuid?}") {
+                val uuidString = call.parameters["uuid"]
+                context.bindDelete(uuidString).fold({ call.respond(it) }, { handleErrors(it) })
+            }
+        }
     }
 }
-
-@Path("/{uuidString}")
-data class UuidParam(@PathParam("UUID") val uuidString: String)
