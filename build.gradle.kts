@@ -9,9 +9,9 @@ val swagger_generator_version: String by project
 
 plugins {
     application
-    kotlin("jvm") version "1.6.21"
-    kotlin("kapt") version "1.6.21"
-    id("com.sourcemuse.mongo") version "1.0.7"
+    kotlin("jvm") version "1.7.10"
+    kotlin("kapt") version "1.7.10"
+    id("com.sourcemuse.mongo") version "2.0.0"
 }
 
 group = "community.flock"
@@ -39,7 +39,6 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("community.flock:kmonad-core:0.0.1-SNAPSHOT")
     implementation("org.litote.kmongo:kmongo-coroutine:$kmongo_version")
-    implementation("com.github.papsign:Ktor-OpenAPI-Generator:-SNAPSHOT")
 
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
